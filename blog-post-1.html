@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Rapid Reaktor - Jay Ferreira</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist Mono', 'Courier New', monospace;
+            background-color: #fafafa;
+            color: #111111;
+            line-height: 1.8;
+            font-weight: 400;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 60px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            background-color: #111111;
+            color: #fff;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #111111;
+        }
+
+        /* Back Link */
+        .back-link {
+            margin-bottom: 40px;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link a:hover {
+            color: #111111;
+        }
+
+        /* Article */
+        article {
+            margin-bottom: 80px;
+        }
+
+        .article-title {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        .article-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .article-content {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .article-content h2 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-content h3 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-content p {
+            margin-bottom: 20px;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+        }
+
+        .article-content code {
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .article-content pre {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .article-content pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #000;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .signature-img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .footer-name {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 32px;
+            }
+
+            .article-content h2 {
+                font-size: 24px;
+            }
+
+            nav {
+                gap: 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <a href="portfolio.html" class="logo">JF</a>
+            <nav>
+                <a href="portfolio.html">Home</a>
+                <a href="blog.html" class="active">Blog</a>
+                <a href="/cdn-cgi/l/email-protection#6208031b2208031b04071010070b10034c010d0f">Email</a>
+                <a href="https://github.com/jayferreira" target="_blank">GitHub</a>
+            </nav>
+        </header>
+
+        <!-- Back Link -->
+        <div class="back-link">
+            <a href="blog.html">← Back to Blog</a>
+        </div>
+
+        <!-- Article -->
+        <article>
+            <h1 class="article-title">Building Rapid Reaktor: Automating Security Responses</h1>
+            <div class="article-meta">January 15, 2025 / Security Automation / 8 min read</div>
+            
+            <div class="article-content">
+                <p>
+                    When you're managing enterprise security infrastructure, manual threat response becomes 
+                    a bottleneck. Every minute spent manually updating firewall rules or EDLs (External Dynamic 
+                    Lists) is a minute that threats remain active in your network.
+                </p>
+
+                <p>
+                    This is why I built Rapid Reaktor - a comprehensive security automation platform that 
+                    monitors syslog messages and automatically responds to threats in real-time.
+                </p>
+
+                <h2>The Problem</h2>
+
+                <p>
+                    Traditional security operations rely heavily on manual intervention. When a threat is 
+                    detected through syslog monitoring, a security analyst must:
+                </p>
+
+                <ul>
+                    <li>Review the log entry and determine if it's a genuine threat</li>
+                    <li>Extract the malicious IP address or domain</li>
+                    <li>Manually update the firewall's External Dynamic List</li>
+                    <li>Verify the update was successful</li>
+                    <li>Document the incident</li>
+                </ul>
+
+                <p>
+                    This process can take anywhere from 5 to 30 minutes depending on the analyst's availability 
+                    and workload. In that time, the threat remains active.
+                </p>
+
+                <h2>The Solution</h2>
+
+                <p>
+                    Rapid Reaktor automates this entire workflow. It continuously monitors syslog streams, 
+                    uses pattern matching to identify threats, and automatically updates EDLs in real-time.
+                </p>
+
+                <h3>Key Features</h3>
+
+                <ul>
+                    <li><strong>Pattern Matching Engine</strong> - Sophisticated regex patterns to identify threats in syslog messages</li>
+                    <li><strong>Automated EDL Updates</strong> - Instantly adds malicious IPs to External Dynamic Lists</li>
+                    <li><strong>Manual Management Interface</strong> - Web dashboard for reviewing and managing blocked IPs</li>
+                    <li><strong>Activity Logging</strong> - Complete audit trail of all automated actions</li>
+                    <li><strong>Rule-Based Responses</strong> - Configurable rules for different threat types</li>
+                </ul>
+
+                <h3>Technical Implementation</h3>
+
+                <p>
+                    The platform is built using:
+                </p>
+
+                <ul>
+                    <li>Python for the backend syslog processing engine</li>
+                    <li>React/Next.js for the management dashboard</li>
+                    <li>FastAPI for the API layer</li>
+                    <li>PostgreSQL for storing threat intelligence and activity logs</li>
+                    <li>Docker for containerized deployment</li>
+                </ul>
+
+                <h2>Real-World Impact</h2>
+
+                <p>
+                    After deploying Rapid Reaktor in a test environment, the results were impressive:
+                </p>
+
+                <ul>
+                    <li>Response time reduced from 5-30 minutes to under 1 second</li>
+                    <li>100% of threats automatically blocked without human intervention</li>
+                    <li>Complete audit trail for compliance reporting</li>
+                    <li>Security team freed up to focus on strategic initiatives</li>
+                </ul>
+
+                <h2>Lessons Learned</h2>
+
+                <p>
+                    Building Rapid Reaktor taught me several important lessons about security automation:
+                </p>
+
+                <ol>
+                    <li><strong>Pattern Matching is Hard</strong> - Creating robust regex patterns that catch real threats without false positives requires extensive testing</li>
+                    <li><strong>Logging is Critical</strong> - Every automated action must be logged for audit and debugging purposes</li>
+                    <li><strong>Manual Override is Essential</strong> - No matter how good your automation is, humans need to be able to intervene</li>
+                    <li><strong>Performance Matters</strong> - When processing high-volume syslog streams, every millisecond counts</li>
+                </ol>
+
+                <h2>What's Next</h2>
+
+                <p>
+                    The MVP is complete, but there's always room for improvement. Future enhancements include:
+                </p>
+
+                <ul>
+                    <li>Machine learning for threat detection</li>
+                    <li>Integration with SOAR platforms</li>
+                    <li>Multi-vendor firewall support</li>
+                    <li>Threat intelligence feed integration</li>
+                </ul>
+
+                <p>
+                    If you're interested in learning more about Rapid Reaktor or have questions about 
+                    security automation, feel free to reach out!
+                </p>
+            </div>
+        </article>
+
+        <!-- Footer -->
+        <footer>
+            <img src="signature.png" alt="Jay Ferreira Signature" class="signature-img">
+            <div class="footer-name">jay ferreira</div>
+  

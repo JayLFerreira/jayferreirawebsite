@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Jay Ferreira</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist Mono', 'Courier New', monospace;
+            background-color: #fafafa;
+            color: #111111;
+            line-height: 1.6;
+            font-weight: 400;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 80px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            background-color: #111111;
+            color: #fff;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #111111;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 32px;
+            font-weight: normal;
+            margin-bottom: 40px;
+            letter-spacing: -0.01em;
+        }
+
+        .section-title::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Blog Posts */
+        .blog-posts {
+            margin-bottom: 100px;
+        }
+
+        .blog-post {
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .blog-post:last-child {
+            border-bottom: none;
+        }
+
+        .blog-post-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            letter-spacing: -0.01em;
+        }
+
+        .blog-post-title:hover {
+            transform: translateX(10px);
+        }
+
+        .blog-post-title a {
+            color: #111111;
+            text-decoration: none;
+        }
+
+        .blog-post-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .blog-post-excerpt {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .read-more {
+            color: #111111;
+            text-decoration: none;
+            font-size: 14px;
+            border-bottom: 1px solid #111111;
+            transition: color 0.3s ease;
+        }
+
+        .read-more:hover {
+            color: #666;
+            border-color: #666;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .signature-img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .footer-name {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                gap: 15px;
+                font-size: 12px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .blog-post-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <a href="index.html" class="logo">JF</a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="blog.html" class="active">Blog</a>
+                <a href="/cdn-cgi/l/email-protection#d7bdb6ae97bdb6aeb1b2a5a5b2bea5b6f9b4b8ba">Email</a>
+                <a href="https://github.com/jayferreira" target="_blank">GitHub</a>
+            </nav>
+        </header>
+
+        <!-- Blog Section -->
+        <section class="blog-posts">
+            <h1 class="section-title">blog</h1>
+
+            <!-- Blog Post 1 -->
+            <article class="blog-post">
+                <h2 class="blog-post-title">
+                    <a href="blog-post-1.html">Building Rapid Reaktor: Automating Security Responses</a>
+                </h2>
+                <div class="blog-post-meta">January 15, 2025 / Security Automation</div>
+                <p class="blog-post-excerpt">
+                    How I built a security automation platform that monitors syslog messages and automatically 
+                    responds to threats by updating External Dynamic Lists (EDLs). A deep dive into pattern 
+                    matching, automated responses, and building a comprehensive security automation MVP.
+                </p>
+                <a href="blog-post-1.html" class="read-more">Read more →</a>
+            </article>
+
+            <!-- Blog Post 2 -->
+            <article class="blog-post">
+                <h2 class="blog-post-title">
+                    <a href="blog-post-2.html">PuTTY Theme Editor: From Idea to Docker Deployment</a>
+                </h2>
+                <div class="blog-post-meta">January 3, 2025 / Web Development</div>
+                <p class="blog-post-excerpt">
+                    Creating a visual terminal theme editor with live preview and registry export. 
+                    This project taught me about color management, visual feedback systems, and deploying 
+                    lightweight tools to AWS using Docker containers.
+                </p>
+                <a href="blog-post-2.html" class="read-more">Read more →</a>
+            </article>
+
+            <!-- Blog Post 3 -->
+            <article class="blog-post">
+                <h2 class="blog-post-title">
+                    <a href="blog-post-3.html">Network Security Best Practices for 2025</a>
+                </h2>
+                <div class="blog-post-meta">December 28, 2024 / Cybersecurity</div>
+                <p class="blog-post-excerpt">
+                    As we enter 2025, network security continues to evolve. Here are the key practices 
+                    every organization should implement: zero trust architecture, automated threat response, 
+                    and comprehensive logging strategies.
+                </p>
+                <a href="blog-post-3.html" class="read-more">Read more →</a>
+            </article>
+
+            <!-- Blog Post 4 -->
+            <article class="blog-post">
+                <h2 class="blog-post-title">
+                    <a href="blog-post-4.html">Understanding Firewall Rules: NAT, Proxies, and Load Balancers</a>
+                </h2>
+                <div class="blog-post-meta">December 10, 2024 / Networking</div>
+                <p class="blog-post-excerpt">
+                    A comprehensive guide to understanding how NAT, proxies, and load balancers work together 
+                    in modern network architectures. Learn when to use each and how they impact your security posture.
+                </p>
+                <a href="blog-post-4.html" class="read-more">Read more →</a>
+            </article>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <img src="signature.png" alt="Jay Ferreira Signature" class="signature-img">
+            <div class="footer-name">jay ferreira</div>
+  
