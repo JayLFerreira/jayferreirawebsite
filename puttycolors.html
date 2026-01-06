@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PuTTY Theme Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+        }
+
+        .editor-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .editor-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .preview-panel, .color-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .window-title {
+            background: linear-gradient(180deg, #fff 0%, #e5e5e5 100%);
+            border-bottom: 1px solid #999;
+            padding: 4px 8px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: -20px -20px 0 -20px;
+            height: 30px;
+        }
+
+        .window-title-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .window-icon {
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #4a90e2 0%, #2e5f8a 100%);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .window-title-text {
+            font-size: 12px;
+            color: #000;
+            font-weight: 400;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-button {
+            width: 28px;
+            height: 22px;
+            border: 1px solid #999;
+            background: linear-gradient(180deg, #fff 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .window-button:hover {
+            background: linear-gradient(180deg, #e8f4ff 0%, #c4e0ff 100%);
+        }
+
+        .window-button.close:hover {
+            background: linear-gradient(180deg, #e81123 0%, #c50515 100%);
+            color: white;
+        }
+
+        .window-button.minimize::before {
+            content: '';
+            width: 8px;
+            height: 2px;
+            background: currentColor;
+        }
+
+        .window-button.maximize::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border: 2px solid currentColor;
+        }
+
+        .window-button.close::before {
+            content: '×';
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .terminal {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 500px;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            margin-top: 0;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            vertical-align: text-bottom;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        .typing-text {
+            display: inline;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            vertical-align: text-bottom;
+            animation: blink 1s infinite;
+        }
+
+        .color-section {
+            margin-bottom: 30px;
+        }
+
+        .color-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .color-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .color-input-row {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .color-input-row label {
+            flex: 1;
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .color-input-row input[type="color"] {
+            width: 50px;
+            height: 32px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .color-input-row input[type="text"] {
+            width: 85px;
+            padding: 6px 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: monospace;
+            text-transform: uppercase;
+        }
+
+        .export-button {
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .export-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .export-button:active {
+            transform: translateY(0);
+        }
+
+        .export-button.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            margin-top: 10px;
+        }
+
+        .export-button.secondary:hover {
+            background: #f0f0f0;
+        }
+
+        .export-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .export-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .help-text strong {
+            color: #333;
+        }
+
+        .success-message {
+            display: none;
+            padding: 10px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+            color: #155724;
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: white;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            transition: border-color 0.2s;
+        }
+
+        footer a:hover {
+            border-bottom-color: white;
+        }
+
+        .upload-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .upload-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .file-upload-area.drag-over {
+            border-color: #667eea;
+            background: #e8f0ff;
+        }
+
+        .file-upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .upload-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .upload-subtext {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .sessions-found {
+            display: none;
+            padding: 10px;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            color: #856404;
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .sessions-found.show {
+            display: block;
+        }
+
+        .color-panel {
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .theme-selector {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .theme-selector h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .theme-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .theme-button {
+            padding: 10px 12px;
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .theme-button:hover {
+            background: #e8e8e8;
+            border-color: #999;
+            transform: translateY(-1px);
+        }
+
+        .theme-button:active {
+            transform: translateY(0);
+        }
+
+        .theme-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .color-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .color-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .color-panel::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .color-panel::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PuTTY Theme Editor</h1>
+        <p style="text-align: center; color: white; font-size: 16px; margin-top: -30px; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+            Visually customize your PuTTY terminal colors with live preview. Create new themes from scratch or apply your custom colors to all your existing saved sessions at once.
+        </p>
+
+        <div class="editor-layout">
+            <!-- Left Column: Preview + Export Sections -->
+            <div class="left-column">
+                <!-- Preview Panel -->
+                <div class="preview-panel">
+                    <div class="window-title">
+                        <div class="window-title-left">
+                            <div class="window-icon">P</div>
+                            <span class="window-title-text">user@hostname - PuTTY</span>
+                        </div>
+                        <div class="window-controls">
+                            <div class="window-button minimize"></div>
+                            <div class="window-button maximize"></div>
+                            <div class="window-button close"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="terminal" id="terminal">
+                        <div>
+                            <span class="prompt-user">user@hostname</span><span>:</span><span class="prompt-dir">~</span><span>$ </span><span class="typing-text" id="typing-text"></span><span class="typing-cursor" id="typing-cursor"></span>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <div>
+                                <span class="prompt-user">user@hostname</span><span>:</span><span class="prompt-dir">~</span><span>$ ls -la</span>
+                            </div>
+                            <div class="text-white">total 48</div>
+                            <div>
+                                <span class="text-blue">drwxr-xr-x</span>
+                                <span> 5 user user 4096 Jan 1 12:00 </span>
+                                <span class="text-cyan">.</span>
+                            </div>
+                            <div>
+                                <span class="text-blue">drwxr-xr-x</span>
+                                <span> 3 root root 4096 Jan 1 12:00 </span>
+                                <span class="text-cyan">..</span>
+                            </div>
+                            <div>
+                                <span class="text-white">-rw-r--r--</span>
+                                <span> 1 user user  220 Jan 1 12:00 </span>
+                                <span>.bash_logout</span>
+                            </div>
+                            <div>
+                                <span class="text-white">-rw-r--r--</span>
+                                <span> 1 user user 3526 Jan 1 12:00 </span>
+                                <span>.bashrc</span>
+                            </div>
+                            <div>
+                                <span class="text-blue">drwxr-xr-x</span>
+                                <span> 2 user user 4096 Jan 1 12:00 </span>
+                                <span class="text-bright-blue">Documents</span>
+                            </div>
+                            <div>
+                                <span class="text-green">-rwxr-xr-x</span>
+                                <span> 1 user user 8192 Jan 1 12:00 </span>
+                                <span class="text-bright-green">script.sh</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <div>
+                                <span class="prompt-user">user@hostname</span><span>:</span><span class="prompt-dir">~</span><span>$ echo "Testing ANSI colors"</span>
+                            </div>
+                            <div>Testing ANSI colors</div>
+                            <div style="margin-top: 10px;">
+                                <span class="text-red">Error: </span>
+                                <span>This is a </span>
+                                <span class="text-bright-red">critical</span>
+                                <span> message</span>
+                            </div>
+                            <div>
+                                <span class="text-yellow">Warning: </span>
+                                <span>Check the </span>
+                                <span class="text-bright-yellow">configuration</span>
+                            </div>
+                            <div>
+                                <span class="text-green">Success: </span>
+                                <span>Operation </span>
+                                <span class="text-bright-green">completed</span>
+                            </div>
+                            <div>
+                                <span class="text-cyan">Info: </span>
+                                <span>Processing </span>
+                                <span class="text-bright-cyan">data</span>
+                            </div>
+                            <div>
+                                <span class="text-magenta">Debug: </span>
+                                <span class="text-bright-magenta">verbose output</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Section -->
+                <div class="preview-panel">
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #333;">Export Options</h2>
+                    
+                    <div class="export-section" style="padding-top: 0; border-top: none; margin-top: 0;">
+                        <h3>New Default Settings</h3>
+                        <div class="help-text">
+                            Creates a new Default Settings profile with your custom colors
+                        </div>
+                        <button class="export-button" onclick="exportTheme()">Download .reg File</button>
+                    </div>
+
+                    <div class="upload-section">
+                        <h3>Update Existing Sessions</h3>
+                        <div class="help-text">
+                            Upload your PuTTY sessions .reg file to apply these colors to all your saved sessions
+                        </div>
+                        
+                        <label for="file-input" class="file-upload-area" id="upload-area">
+                            <div class="upload-icon">📁</div>
+                            <div class="upload-text">Click to browse or drag & drop</div>
+                            <div class="upload-subtext">PuTTY .reg file</div>
+                            <input type="file" id="file-input" accept=".reg" onchange="handleFileUpload(event)">
+                        </label>
+                        
+                        <div class="sessions-found" id="sessions-found"></div>
+                        
+                        <button class="export-button secondary" id="export-sessions-btn" style="display: none;" onclick="exportUpdatedSessions()">
+                            Download Updated Sessions
+                        </button>
+                    </div>
+
+                    <div class="help-text" style="margin-top: 20px; border-left-color: #ffc107;">
+                        <strong>Windows blocking the file?</strong><br>
+                        Right-click the .reg file → Properties → Check "Unblock" → Apply → OK → Double-click to import
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Color Palette Panel -->
+            <div class="color-panel">
+                <div class="theme-selector">
+                    <h3>Quick Themes</h3>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 12px; line-height: 1.5;">
+                        Here are some quick starting points for your editing pleasure
+                    </p>
+                    <div class="theme-buttons">
+                        <button class="theme-button" onclick="loadTheme('jaysClassic')">Jay's Classic</button>
+                        <button class="theme-button" onclick="loadTheme('eyeComfort')">Eye Comfort</button>
+                        <button class="theme-button" onclick="loadTheme('matrix')">Matrix</button>
+                        <button class="theme-button" onclick="loadTheme('default')">Default</button>
+                        <button class="theme-button" onclick="loadTheme('dracula')">Dracula</button>
+                        <button class="theme-button" onclick="loadTheme('monokai')">Monokai</button>
+                        <button class="theme-button" onclick="loadTheme('solarized')">Solarized Dark</button>
+                        <button class="theme-button" onclick="loadTheme('nord')">Nord</button>
+                        <button class="theme-button" onclick="loadTheme('gruvbox')">Gruvbox Dark</button>
+                    </div>
+                </div>
+
+                <div class="color-section">
+                    <h3>Basic Colors</h3>
+                    <div id="basic-colors"></div>
+                </div>
+
+                <div class="color-section">
+                    <h3>ANSI Colors</h3>
+                    <div id="ansi-colors"></div>
+                </div>
+
+                <div class="color-section">
+                    <h3>Bright ANSI Colors</h3>
+                    <div id="bright-colors"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            © 2026 Jay Ferreira | <a href="https://jayferreira.com" target="_blank">JayFerreira.com</a>
+        </footer>
+    </div>
+
+    <script>
+        const defaultColors = {
+            background: '#000000',
+            foreground: '#BBBBBB',
+            cursor: '#00FF00',
+            black: '#000000',
+            red: '#BB0000',
+            green: '#00BB00',
+            yellow: '#BBBB00',
+            blue: '#0000BB',
+            magenta: '#BB00BB',
+            cyan: '#00BBBB',
+            white: '#BBBBBB',
+            brightBlack: '#555555',
+            brightRed: '#FF5555',
+            brightGreen: '#55FF55',
+            brightYellow: '#FFFF55',
+            brightBlue: '#5555FF',
+            brightMagenta: '#FF55FF',
+            brightCyan: '#55FFFF',
+            brightWhite: '#FFFFFF'
+        };
+
+        const themes = {
+            default: defaultColors,
+            jaysClassic: {
+                background: '#4E4E4E',
+                foreground: '#91C8FF',
+                cursor: '#000000',
+                black: '#000000',
+                red: '#BB0000',
+                green: '#00BB00',
+                yellow: '#BBBB00',
+                blue: '#0000BB',
+                magenta: '#BB00BB',
+                cyan: '#00BBBB',
+                white: '#BBBBBB',
+                brightBlack: '#555555',
+                brightRed: '#FF5555',
+                brightGreen: '#55FF55',
+                brightYellow: '#FFFF55',
+                brightBlue: '#5555FF',
+                brightMagenta: '#FF55FF',
+                brightCyan: '#55FFFF',
+                brightWhite: '#FFFFFF'
+            },
+            eyeComfort: {
+                background: '#1E1E1E',
+                foreground: '#D4D4D4',
+                cursor: '#AEAFAD',
+                black: '#1E1E1E',
+                red: '#CE6F6F',
+                green: '#98C379',
+                yellow: '#E5C07B',
+                blue: '#61AFEF',
+                magenta: '#C678DD',
+                cyan: '#56B6C2',
+                white: '#ABB2BF',
+                brightBlack: '#5C6370',
+                brightRed: '#E06C75',
+                brightGreen: '#98C379',
+                brightYellow: '#E5C07B',
+                brightBlue: '#61AFEF',
+                brightMagenta: '#C678DD',
+                brightCyan: '#56B6C2',
+                brightWhite: '#FFFFFF'
+            },
+            matrix: {
+                background: '#000000',
+                foreground: '#00FF00',
+                cursor: '#00FF00',
+                black: '#000000',
+                red: '#008800',
+                green: '#00FF00',
+                yellow: '#88FF00',
+                blue: '#00AA00',
+                magenta: '#00DD00',
+                cyan: '#00FF88',
+                white: '#00CC00',
+                brightBlack: '#006600',
+                brightRed: '#00AA00',
+                brightGreen: '#00FF00',
+                brightYellow: '#AAFF00',
+                brightBlue: '#00DD00',
+                brightMagenta: '#00FF00',
+                brightCyan: '#88FF88',
+                brightWhite: '#CCFFCC'
+            },
+            dracula: {
+                background: '#282A36',
+                foreground: '#F8F8F2',
+                cursor: '#F8F8F0',
+                black: '#21222C',
+                red: '#FF5555',
+                green: '#50FA7B',
+                yellow: '#F1FA8C',
+                blue: '#BD93F9',
+                magenta: '#FF79C6',
+                cyan: '#8BE9FD',
+                white: '#F8F8F2',
+                brightBlack: '#6272A4',
+                brightRed: '#FF6E6E',
+                brightGreen: '#69FF94',
+                brightYellow: '#FFFFA5',
+                brightBlue: '#D6ACFF',
+                brightMagenta: '#FF92DF',
+                brightCyan: '#A4FFFF',
+                brightWhite: '#FFFFFF'
+            },
+            monokai: {
+                background: '#272822',
+                foreground: '#F8F8F2',
+                cursor: '#F8F8F0',
+                black: '#272822',
+                red: '#F92672',
+                green: '#A6E22E',
+                yellow: '#F4BF75',
+                blue: '#66D9EF',
+                magenta: '#AE81FF',
+                cyan: '#A1EFE4',
+                white: '#F8F8F2',
+                brightBlack: '#75715E',
+                brightRed: '#F92672',
+                brightGreen: '#A6E22E',
+                brightYellow: '#E6DB74',
+                brightBlue: '#66D9EF',
+                brightMagenta: '#AE81FF',
+                brightCyan: '#A1EFE4',
+                brightWhite: '#F9F8F5'
+            },
+            solarized: {
+                background: '#002B36',
+                foreground: '#839496',
+                cursor: '#93A1A1',
+                black: '#073642',
+                red: '#DC322F',
+                green: '#859900',
+                yellow: '#B58900',
+                blue: '#268BD2',
+                magenta: '#D33682',
+                cyan: '#2AA198',
+                white: '#EEE8D5',
+                brightBlack: '#002B36',
+                brightRed: '#CB4B16',
+                brightGreen: '#586E75',
+                brightYellow: '#657B83',
+                brightBlue: '#839496',
+                brightMagenta: '#6C71C4',
+                brightCyan: '#93A1A1',
+                brightWhite: '#FDF6E3'
+            },
+            nord: {
+                background: '#2E3440',
+                foreground: '#D8DEE9',
+                cursor: '#D8DEE9',
+                black: '#3B4252',
+                red: '#BF616A',
+                green: '#A3BE8C',
+                yellow: '#EBCB8B',
+                blue: '#81A1C1',
+                magenta: '#B48EAD',
+                cyan: '#88C0D0',
+                white: '#E5E9F0',
+                brightBlack: '#4C566A',
+                brightRed: '#BF616A',
+                brightGreen: '#A3BE8C',
+                brightYellow: '#EBCB8B',
+                brightBlue: '#81A1C1',
+                brightMagenta: '#B48EAD',
+                brightCyan: '#8FBCBB',
+                brightWhite: '#ECEFF4'
+            },
+            gruvbox: {
+                background: '#282828',
+                foreground: '#EBDBB2',
+                cursor: '#EBDBB2',
+                black: '#282828',
+                red: '#CC241D',
+                green: '#98971A',
+                yellow: '#D79921',
+                blue: '#458588',
+                magenta: '#B16286',
+                cyan: '#689D6A',
+                white: '#A89984',
+                brightBlack: '#928374',
+                brightRed: '#FB4934',
+                brightGreen: '#B8BB26',
+                brightYellow: '#FABD2F',
+                brightBlue: '#83A598',
+                brightMagenta: '#D3869B',
+                brightCyan: '#8EC07C',
+                brightWhite: '#EBDBB2'
+            }
+        };
+
+        let colors = { ...defaultColors };
+        let currentTheme = 'default';
+        let uploadedSessions = null;
+        let sessionNames = [];
+
+        const colorGroups = {
+            'basic-colors': [
+                { key: 'background', label: 'Background' },
+                { key: 'foreground', label: 'Foreground' },
+                { key: 'cursor', label: 'Cursor' }
+            ],
+            'ansi-colors': [
+                { key: 'black', label: 'Black' },
+                { key: 'red', label: 'Red' },
+                { key: 'green', label: 'Green' },
+                { key: 'yellow', label: 'Yellow' },
+                { key: 'blue', label: 'Blue' },
+                { key: 'magenta', label: 'Magenta' },
+                { key: 'cyan', label: 'Cyan' },
+                { key: 'white', label: 'White' }
+            ],
+            'bright-colors': [
+                { key: 'brightBlack', label: 'Bright Black' },
+                { key: 'brightRed', label: 'Bright Red' },
+                { key: 'brightGreen', label: 'Bright Green' },
+                { key: 'brightYellow', label: 'Bright Yellow' },
+                { key: 'brightBlue', label: 'Bright Blue' },
+                { key: 'brightMagenta', label: 'Bright Magenta' },
+                { key: 'brightCyan', label: 'Bright Cyan' },
+                { key: 'brightWhite', label: 'Bright White' }
+            ]
+        };
+
+        function createColorInput(key, label) {
+            const row = document.createElement('div');
+            row.className = 'color-input-row';
+
+            const labelEl = document.createElement('label');
+            labelEl.textContent = label;
+            
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.value = colors[key];
+            colorInput.addEventListener('input', (e) => updateColor(key, e.target.value));
+
+            const textInput = document.createElement('input');
+            textInput.type = 'text';
+            textInput.value = colors[key];
+            textInput.maxLength = 7;
+            textInput.addEventListener('input', (e) => {
+                const value = e.target.value;
+                if (/^#[0-9A-Fa-f]{0,6}$/.test(value)) {
+                    if (value.length === 7) {
+                        updateColor(key, value);
+                        colorInput.value = value;
+                    }
+                }
+            });
+
+            row.appendChild(labelEl);
+            row.appendChild(colorInput);
+            row.appendChild(textInput);
+
+            return { row, colorInput, textInput };
+        }
+
+        function initializeColorInputs() {
+            for (const [groupId, colorList] of Object.entries(colorGroups)) {
+                const container = document.getElementById(groupId);
+                colorList.forEach(({ key, label }) => {
+                    const { row } = createColorInput(key, label);
+                    container.appendChild(row);
+                });
+            }
+        }
+
+        function updateColor(key, value) {
+            colors[key] = value.toUpperCase();
+            updateTerminalColors();
+            updateColorInputs();
+        }
+
+        function updateColorInputs() {
+            // Update all color and text inputs to match current colors
+            for (const [groupId, colorList] of Object.entries(colorGroups)) {
+                const container = document.getElementById(groupId);
+                const rows = container.querySelectorAll('.color-input-row');
+                
+                colorList.forEach(({ key }, index) => {
+                    if (rows[index]) {
+                        const colorInput = rows[index].querySelector('input[type="color"]');
+                        const textInput = rows[index].querySelector('input[type="text"]');
+                        
+                        if (colorInput) colorInput.value = colors[key];
+                        if (textInput) textInput.value = colors[key];
+                    }
+                });
+            }
+        }
+
+        function loadTheme(themeName) {
+            currentTheme = themeName;
+            colors = { ...themes[themeName] };
+            updateTerminalColors();
+            updateColorInputs();
+            updateThemeButtons();
+        }
+
+        function updateThemeButtons() {
+            document.querySelectorAll('.theme-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Map display names to theme keys
+            const themeMap = {
+                "jay'sclassic": 'jaysClassic',
+                'eyecomfort': 'eyeComfort',
+                'matrix': 'matrix',
+                'default': 'default',
+                'dracula': 'dracula',
+                'monokai': 'monokai',
+                'solarizeddark': 'solarized',
+                'nord': 'nord',
+                'gruvboxdark': 'gruvbox'
+            };
+            
+            const activeButton = Array.from(document.querySelectorAll('.theme-button'))
+                .find(btn => {
+                    const btnKey = btn.textContent.toLowerCase().replace(/['\s]/g, '');
+                    return themeMap[btnKey] === currentTheme;
+                });
+            
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        function updateTerminalColors() {
+            const terminal = document.getElementById('terminal');
+            terminal.style.backgroundColor = colors.background;
+            terminal.style.color = colors.foreground;
+
+            const typingCursor = document.getElementById('typing-cursor');
+            if (typingCursor) {
+                typingCursor.style.backgroundColor = colors.cursor;
+            }
+
+            // Update prompt colors
+            document.querySelectorAll('.prompt-user').forEach(el => el.style.color = colors.green);
+            document.querySelectorAll('.prompt-dir').forEach(el => el.style.color = colors.blue);
+
+            // Update text colors
+            const colorMap = {
+                'text-black': 'black',
+                'text-red': 'red',
+                'text-green': 'green',
+                'text-yellow': 'yellow',
+                'text-blue': 'blue',
+                'text-magenta': 'magenta',
+                'text-cyan': 'cyan',
+                'text-white': 'white',
+                'text-bright-black': 'brightBlack',
+                'text-bright-red': 'brightRed',
+                'text-bright-green': 'brightGreen',
+                'text-bright-yellow': 'brightYellow',
+                'text-bright-blue': 'brightBlue',
+                'text-bright-magenta': 'brightMagenta',
+                'text-bright-cyan': 'brightCyan',
+                'text-bright-white': 'brightWhite'
+            };
+
+            for (const [className, colorKey] of Object.entries(colorMap)) {
+                document.querySelectorAll(`.${className}`).forEach(el => {
+                    el.style.color = colors[colorKey];
+                });
+            }
+        }
+
+        function rgbToInt(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `${r},${g},${b}`;
+        }
+
+        function exportTheme() {
+            const regContent = `Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\\Software\\SimonTatham\\PuTTY\\Sessions\\Default%20Settings]
+"Colour0"="${rgbToInt(colors.foreground)}"
+"Colour1"="${rgbToInt(colors.foreground)}"
+"Colour2"="${rgbToInt(colors.background)}"
+"Colour3"="${rgbToInt(colors.background)}"
+"Colour4"="${rgbToInt(colors.cursor)}"
+"Colour5"="${rgbToInt(colors.foreground)}"
+"Colour6"="${rgbToInt(colors.black)}"
+"Colour7"="${rgbToInt(colors.brightBlack)}"
+"Colour8"="${rgbToInt(colors.red)}"
+"Colour9"="${rgbToInt(colors.brightRed)}"
+"Colour10"="${rgbToInt(colors.green)}"
+"Colour11"="${rgbToInt(colors.brightGreen)}"
+"Colour12"="${rgbToInt(colors.yellow)}"
+"Colour13"="${rgbToInt(colors.brightYellow)}"
+"Colour14"="${rgbToInt(colors.blue)}"
+"Colour15"="${rgbToInt(colors.brightBlue)}"
+"Colour16"="${rgbToInt(colors.magenta)}"
+"Colour17"="${rgbToInt(colors.brightMagenta)}"
+"Colour18"="${rgbToInt(colors.cyan)}"
+"Colour19"="${rgbToInt(colors.brightCyan)}"
+"Colour20"="${rgbToInt(colors.white)}"
+"Colour21"="${rgbToInt(colors.brightWhite)}"`;
+
+            const blob = new Blob([regContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'putty-theme.reg';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                parseRegFile(content);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseRegFile(content) {
+            // Extract all session sections from the reg file
+            const sessionRegex = /\[HKEY_CURRENT_USER\\Software\\SimonTatham\\PuTTY\\Sessions\\([^\]]+)\]/g;
+            const matches = [...content.matchAll(sessionRegex)];
+            
+            if (matches.length === 0) {
+                alert('No PuTTY sessions found in this file.');
+                return;
+            }
+
+            uploadedSessions = content;
+            sessionNames = matches.map(match => {
+                // Decode URL-encoded session names (e.g., Default%20Settings)
+                return decodeURIComponent(match[1]);
+            });
+
+            const sessionsFoundEl = document.getElementById('sessions-found');
+            sessionsFoundEl.textContent = `Found ${sessionNames.length} session(s): ${sessionNames.join(', ')}`;
+            sessionsFoundEl.classList.add('show');
+
+            const exportBtn = document.getElementById('export-sessions-btn');
+            exportBtn.style.display = 'block';
+        }
+
+        function exportUpdatedSessions() {
+            if (!uploadedSessions) {
+                alert('Please upload a .reg file first.');
+                return;
+            }
+
+            let updatedContent = uploadedSessions;
+
+            // For each session found, update all color values
+            const sessionRegex = /\[HKEY_CURRENT_USER\\Software\\SimonTatham\\PuTTY\\Sessions\\[^\]]+\][^[]*(?=\[|$)/g;
+            
+            updatedContent = updatedContent.replace(sessionRegex, (sessionBlock) => {
+                // Update all Colour entries in this session block
+                let updated = sessionBlock;
+                
+                updated = updated.replace(/"Colour0"="[^"]*"/, `"Colour0"="${rgbToInt(colors.foreground)}"`);
+                updated = updated.replace(/"Colour1"="[^"]*"/, `"Colour1"="${rgbToInt(colors.foreground)}"`);
+                updated = updated.replace(/"Colour2"="[^"]*"/, `"Colour2"="${rgbToInt(colors.background)}"`);
+                updated = updated.replace(/"Colour3"="[^"]*"/, `"Colour3"="${rgbToInt(colors.background)}"`);
+                updated = updated.replace(/"Colour4"="[^"]*"/, `"Colour4"="${rgbToInt(colors.cursor)}"`);
+                updated = updated.replace(/"Colour5"="[^"]*"/, `"Colour5"="${rgbToInt(colors.foreground)}"`);
+                updated = updated.replace(/"Colour6"="[^"]*"/, `"Colour6"="${rgbToInt(colors.black)}"`);
+                updated = updated.replace(/"Colour7"="[^"]*"/, `"Colour7"="${rgbToInt(colors.brightBlack)}"`);
+                updated = updated.replace(/"Colour8"="[^"]*"/, `"Colour8"="${rgbToInt(colors.red)}"`);
+                updated = updated.replace(/"Colour9"="[^"]*"/, `"Colour9"="${rgbToInt(colors.brightRed)}"`);
+                updated = updated.replace(/"Colour10"="[^"]*"/, `"Colour10"="${rgbToInt(colors.green)}"`);
+                updated = updated.replace(/"Colour11"="[^"]*"/, `"Colour11"="${rgbToInt(colors.brightGreen)}"`);
+                updated = updated.replace(/"Colour12"="[^"]*"/, `"Colour12"="${rgbToInt(colors.yellow)}"`);
+                updated = updated.replace(/"Colour13"="[^"]*"/, `"Colour13"="${rgbToInt(colors.brightYellow)}"`);
+                updated = updated.replace(/"Colour14"="[^"]*"/, `"Colour14"="${rgbToInt(colors.blue)}"`);
+                updated = updated.replace(/"Colour15"="[^"]*"/, `"Colour15"="${rgbToInt(colors.brightBlue)}"`);
+                updated = updated.replace(/"Colour16"="[^"]*"/, `"Colour16"="${rgbToInt(colors.magenta)}"`);
+                updated = updated.replace(/"Colour17"="[^"]*"/, `"Colour17"="${rgbToInt(colors.brightMagenta)}"`);
+                updated = updated.replace(/"Colour18"="[^"]*"/, `"Colour18"="${rgbToInt(colors.cyan)}"`);
+                updated = updated.replace(/"Colour19"="[^"]*"/, `"Colour19"="${rgbToInt(colors.brightCyan)}"`);
+                updated = updated.replace(/"Colour20"="[^"]*"/, `"Colour20"="${rgbToInt(colors.white)}"`);
+                updated = updated.replace(/"Colour21"="[^"]*"/, `"Colour21"="${rgbToInt(colors.brightWhite)}"`);
+
+                // If any color values don't exist in the session, add them
+                if (!updated.includes('"Colour0"=')) {
+                    const insertPoint = updated.lastIndexOf('\n');
+                    const colorEntries = `
+"Colour0"="${rgbToInt(colors.foreground)}"
+"Colour1"="${rgbToInt(colors.foreground)}"
+"Colour2"="${rgbToInt(colors.background)}"
+"Colour3"="${rgbToInt(colors.background)}"
+"Colour4"="${rgbToInt(colors.cursor)}"
+"Colour5"="${rgbToInt(colors.foreground)}"
+"Colour6"="${rgbToInt(colors.black)}"
+"Colour7"="${rgbToInt(colors.brightBlack)}"
+"Colour8"="${rgbToInt(colors.red)}"
+"Colour9"="${rgbToInt(colors.brightRed)}"
+"Colour10"="${rgbToInt(colors.green)}"
+"Colour11"="${rgbToInt(colors.brightGreen)}"
+"Colour12"="${rgbToInt(colors.yellow)}"
+"Colour13"="${rgbToInt(colors.brightYellow)}"
+"Colour14"="${rgbToInt(colors.blue)}"
+"Colour15"="${rgbToInt(colors.brightBlue)}"
+"Colour16"="${rgbToInt(colors.magenta)}"
+"Colour17"="${rgbToInt(colors.brightMagenta)}"
+"Colour18"="${rgbToInt(colors.cyan)}"
+"Colour19"="${rgbToInt(colors.brightCyan)}"
+"Colour20"="${rgbToInt(colors.white)}"
+"Colour21"="${rgbToInt(colors.brightWhite)}"`;
+                    updated = updated.slice(0, insertPoint) + colorEntries + updated.slice(insertPoint);
+                }
+
+                return updated;
+            });
+
+            const blob = new Blob([updatedContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'putty-sessions-updated.reg';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Drag and drop handlers
+        const uploadArea = document.getElementById('upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.reg')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        parseRegFile(e.target.result);
+                    };
+                    reader.readAsText(file);
+                } else {
+                    alert('Please upload a .reg file');
+                }
+            }
+        });
+
+        // Typing animation
+        const typingText = "Select a theme or edit colors, then export the .reg file to install on PuTTY";
+        let typingIndex = 0;
+        let isDeleting = false;
+        const typingElement = document.getElementById('typing-text');
+        const typingCursor = document.getElementById('typing-cursor');
+
+        function typeCharacter() {
+            const cursor = typingCursor;
+            cursor.style.backgroundColor = colors.cursor;
+
+            if (!isDeleting && typingIndex < typingText.length) {
+                // Typing forward
+                typingElement.textContent += typingText.charAt(typingIndex);
+                typingIndex++;
+                setTimeout(typeCharacter, 50); // Typing speed
+            } else if (!isDeleting && typingIndex === typingText.length) {
+                // Finished typing, wait before deleting
+                isDeleting = true;
+                setTimeout(typeCharacter, 3000); // Wait 3 seconds
+            } else if (isDeleting && typingIndex > 0) {
+                // Deleting backward
+                typingIndex--;
+                typingElement.textContent = typingText.substring(0, typingIndex);
+                setTimeout(typeCharacter, 30); // Delete speed (faster)
+            } else if (isDeleting && typingIndex === 0) {
+                // Finished deleting, wait before typing again
+                isDeleting = false;
+                setTimeout(typeCharacter, 500); // Short pause before retyping
+            }
+        }
+
+        // Initialize on page load
+        initializeColorInputs();
+        updateTerminalColors();
+        updateThemeButtons();
+        
+        // Start typing animation after a short delay
+        setTimeout(typeCharacter, 1000);
+    </script>
+</body>
+</html>
