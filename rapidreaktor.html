@@ -385,11 +385,11 @@
     <section class="hero-section hero-c" style="margin-top: 0;">
             <div class="container">
                 <h1>
-                    Under Attack?<br>
-                    <span class="gradient-text">We've Got This.</span>
+                    Stop coordinated attacks<br>
+                    <span class="gradient-text">automatically.</span>
                 </h1>
                 <p class="subtitle">
-                    Rapid Reaktor blocks attacks in milliseconds while your team focuses on the bigger picture. Automated syslog monitoring and EDL updates—so you're never fighting alone.
+                    By being your trusted EDL source, Rapid Reaktor turns firewall alerts into automatic blocks so your team can focus on strategy, not cleanup.
                 </p>
 
                 <div class="dashboard-preview">
@@ -441,32 +441,71 @@
             <h2 class="section-title">Features</h2>
 
             <!-- How It Works -->
-            <div style="max-width: 900px; margin: 0 auto 4rem; padding: 2.5rem; background: white; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-left: 4px solid var(--gradient-start);">
+            <div style="max-width: 900px; margin: 0 auto 4rem; padding: 2.5rem; background: white; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-left: 4px solid var(--gradient-start); text-align: center;">
                 <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-dark);">How It Works</h3>
                 
                 <div style="line-height: 1.8; color: var(--text-dark);">
-                    <p style="margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 600; color: var(--gradient-start);">
-                        More than one attacker? Use Rapid Reaktor!
+                    <p style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--text-dark);">
+                        Stop coordinated attacks automatically.
                     </p>
                     
-                    <p style="margin-bottom: 1rem;">
-                        <strong style="color: var(--gradient-start); font-size: 1.1rem;">YOU are attacked!</strong> A coordinated brute force attack from multiple IPs is flooding your Global Protect gateway. <em style="color: var(--gray-600);">(This is just one example—Rapid Reaktor works for any attack pattern you define: DDoS, web exploits, credential stuffing, port scans, and more.)</em>
+                    <p style="margin-bottom: 2rem;">
+                        When attacks come from dozens of IPs at once, manual blocking breaks down. Rapid Reaktor detects attack patterns in real time, automatically extracts every malicious IP, and updates your Palo Alto firewalls to block them within seconds.
                     </p>
                     
-                    <p style="margin-bottom: 1rem;">
-                        <strong>Your Palo Alto firewall</strong> detects the failed login attempts and sends syslog alerts to Rapid Reaktor in real-time.
-                    </p>
+                    <!-- Flowchart -->
+                    <div style="background: var(--gray-100); border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+                        
+                        <div style="background: white; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚠️</div>
+                            <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Attack Detected</div>
+                            <div style="font-size: 0.8rem; color: var(--gray-600);">Palo Alto sends syslog</div>
+                        </div>
+                        
+                        <div style="color: var(--gradient-start); font-size: 1.5rem; margin: 0.5rem 0;">↓</div>
+                        
+                        <div style="background: white; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+                            <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Pattern Match</div>
+                            <div style="font-size: 0.8rem; color: var(--gray-600);">Rules trigger instantly</div>
+                        </div>
+                        
+                        <div style="color: var(--gradient-start); font-size: 1.5rem; margin: 0.5rem 0;">↓</div>
+                        
+                        <div style="background: white; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                            <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Extract IPs</div>
+                            <div style="font-size: 0.8rem; color: var(--gray-600);">All malicious IPs found</div>
+                        </div>
+                        
+                        <div style="color: var(--gradient-start); font-size: 1.5rem; margin: 0.5rem 0;">↓</div>
+                        
+                        <div style="background: white; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                            <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Update EDL</div>
+                            <div style="font-size: 0.8rem; color: var(--gray-600);">Blocklist refreshed</div>
+                        </div>
+                        
+                        <div style="color: var(--gradient-start); font-size: 1.5rem; margin: 0.5rem 0;">↓</div>
+                        
+                        <div style="background: white; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔄</div>
+                            <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Firewall Pulls EDL</div>
+                            <div style="font-size: 0.8rem; color: var(--gray-600);">Policy updated automatically</div>
+                        </div>
+                        
+                        <div style="color: var(--gradient-start); font-size: 1.5rem; margin: 0.5rem 0;">↓</div>
+                        
+                        <div style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛡️</div>
+                            <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Threats Blocked</div>
+                            <div style="font-size: 0.8rem; color: var(--gray-600);">Sub-second execution</div>
+                        </div>
+                        
+                    </div>
                     
-                    <p style="margin-bottom: 1rem;">
-                        <strong>Pattern matching triggers instantly</strong> — Rapid Reaktor recognizes the attack signature and extracts all attacker IPs, even through NAT and proxies.
-                    </p>
-                    
-                    <p style="margin-bottom: 1rem;">
-                        <strong>EDLs update automatically</strong> — The blocklist is updated in milliseconds. Your firewall pulls the fresh list and blocks all attackers.
-                    </p>
-                    
-                    <p style="margin-bottom: 0;">
-                        <strong>Your team stays focused</strong> — While Rapid Reaktor handles the blocking, your SOC investigates the attack source and root cause.
+                    <p style="margin-bottom: 0; font-weight: 500;">
+                        While the attack is contained automatically, your team focuses on investigation and response—not chasing IPs.
                     </p>
                 </div>
             </div>
