@@ -461,9 +461,7 @@
                     Nothing more.
                 </p>
 
-                <div class="visual-placeholder">
-                    [Architecture diagram: Excel feeding a Python script, which sends mail via Microsoft Graph to an inbox]
-                </div>
+                <img src="mass-emailer-architecture.png" alt="Architecture diagram showing Excel feeding a Python script, which sends mail via Microsoft Graph to an inbox" style="width: 100%; max-width: 700px; margin: 40px 0; border: 1px solid #e0e0e0; border-radius: 4px;">
 
                 <h2>Step 1: Use your own domain on Microsoft 365</h2>
 
@@ -523,9 +521,7 @@
                     For a deeper dive into app registrations and the Microsoft identity platform, see <a href="https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app" target="_blank">Microsoft's official documentation</a>.
                 </p>
 
-                <div class="visual-placeholder">
-                    [Screenshot: Azure App Registration with Graph delegated permissions granted]
-                </div>
+                <img src="entra-app-permissions.png" alt="Screenshot of Azure App Registration with Graph delegated permissions granted" style="width: 100%; max-width: 700px; margin: 40px 0; border: 1px solid #e0e0e0; border-radius: 4px;">
 
                 <p>
                     <strong>Important detail:</strong> I explicitly enabled public client flows so I could use device-code authentication without client secrets.
@@ -607,9 +603,7 @@ Ready to send emails.</div>
                     That makes the process resumable and safe by default.
                 </p>
 
-                <div class="visual-placeholder">
-                    [Screenshot: Excel with Name, Email, Variant, Status columns]
-                </div>
+                <img src="email-list-excel.png" alt="Screenshot of Excel with Name, Email, Variant, Status columns" style="width: 100%; max-width: 700px; margin: 40px 0; border: 1px solid #e0e0e0; border-radius: 4px;">
 
                 <h2>Step 5: Add safety rails in code</h2>
 
