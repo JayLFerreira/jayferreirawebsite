@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Building a Simple, Respectful Mass Emailer with Microsoft 365 - Jay Ferreira</title>
+    <meta name="title" content="Building a Simple, Respectful Mass Emailer with Microsoft 365 - Jay Ferreira">
+    <meta name="description" content="Learn how to build a Python-based mass emailer using Microsoft Graph API, Excel, and device-code authentication. No third-party services, full control, with safety rails.">
+    <meta name="keywords" content="Microsoft Graph API, Python email automation, Microsoft 365, batch email sender, device code authentication, email script, Graph API tutorial, Python automation">
+    <meta name="author" content="Jay Ferreira">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://jayferreira.com/blog/mass-emailer-microsoft-365">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://jayferreira.com/blog/mass-emailer-microsoft-365">
+    <meta property="og:title" content="Building a Simple, Respectful Mass Emailer with Microsoft 365">
+    <meta property="og:description" content="Learn how to build a Python-based mass emailer using Microsoft Graph API, Excel, and device-code authentication. No third-party services, full control, with safety rails.">
+    <meta property="og:site_name" content="Jay Ferreira">
+    <meta property="article:published_time" content="2026-01-26T00:00:00Z">
+    <meta property="article:author" content="Jay Ferreira">
+    <meta property="article:tag" content="Python">
+    <meta property="article:tag" content="Microsoft 365">
+    <meta property="article:tag" content="Automation">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://jayferreira.com/blog/mass-emailer-microsoft-365">
+    <meta name="twitter:title" content="Building a Simple, Respectful Mass Emailer with Microsoft 365">
+    <meta name="twitter:description" content="Learn how to build a Python-based mass emailer using Microsoft Graph API, Excel, and device-code authentication. No third-party services, full control, with safety rails.">
+    <meta name="twitter:creator" content="@jayferreira">
+    
+    <!-- Structured Data for AEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Building a Simple, Respectful Mass Emailer on My Own Domain Using Microsoft 365",
+      "description": "A technical guide on building a Python-based email automation system using Microsoft Graph API, Excel spreadsheets, and device-code authentication for sending controlled batch emails.",
+      "author": {
+        "@type": "Person",
+        "name": "Jay Ferreira",
+        "jobTitle": "Solutions Architect",
+        "url": "https://jayferreira.com"
+      },
+      "datePublished": "2026-01-26",
+      "dateModified": "2026-01-26",
+      "keywords": ["Microsoft Graph API", "Python", "Email Automation", "Microsoft 365", "Device Code Authentication"],
+      "articleSection": "Automation",
+      "dependencies": "Python, Microsoft Graph API, Microsoft 365, Excel",
+      "proficiencyLevel": "Intermediate",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://jayferreira.com/blog/mass-emailer-microsoft-365"
+      }
+    }
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist Mono', 'Courier New', monospace;
+            background-color: #fafafa;
+            color: #111111;
+            line-height: 1.6;
+            font-weight: 400;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 80px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            background-color: #000;
+            color: #fff;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #666;
+        }
+
+        /* Blog Post */
+        .blog-post {
+            margin-bottom: 100px;
+        }
+
+        .post-meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 42px;
+            font-weight: normal;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tag {
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 3px;
+            font-weight: 500;
+            background-color: #000;
+            color: #fff;
+            border: 2px solid;
+        }
+
+        .tag-personal {
+            border-color: #1976d2;
+            box-shadow: 0 0 8px rgba(25, 118, 210, 0.3);
+        }
+
+        .tag-ai {
+            border-color: #7b1fa2;
+            box-shadow: 0 0 8px rgba(123, 31, 162, 0.3);
+        }
+
+        /* TL;DR Collapsible Section */
+        .tldr-section {
+            margin-bottom: 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .tldr-header {
+            background-color: #f5f5f5;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+
+        .tldr-header:hover {
+            background-color: #eeeeee;
+        }
+
+        .tldr-title {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .tldr-arrow {
+            transition: transform 0.3s;
+            font-size: 12px;
+        }
+
+        .tldr-arrow.expanded {
+            transform: rotate(180deg);
+        }
+
+        .tldr-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+
+        .tldr-content.expanded {
+            max-height: 500px;
+            padding: 20px;
+        }
+
+        .tldr-content ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .tldr-content li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .post-content {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .post-content h2 {
+            font-size: 28px;
+            font-weight: normal;
+            margin: 60px 0 20px 0;
+        }
+
+        .post-content h3 {
+            font-size: 20px;
+            font-weight: normal;
+            margin: 40px 0 15px 0;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .post-content ul,
+        .post-content ol {
+            margin: 20px 0 20px 40px;
+        }
+
+        .post-content li {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .post-content pre {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 30px 0;
+            font-size: 14px;
+            line-height: 1.5;
+            border-radius: 4px;
+        }
+
+        .post-content code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            font-size: 14px;
+            border-radius: 3px;
+        }
+
+        .post-content pre code {
+            background-color: transparent;
+            padding: 0;
+            color: #d4d4d4;
+        }
+
+        /* Python syntax highlighting */
+        .keyword { color: #569cd6; }
+        .function { color: #dcdcaa; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; }
+        .operator { color: #d4d4d4; }
+        .number { color: #b5cea8; }
+        .variable { color: #9cdcfe; }
+
+        /* CMD/Terminal output styling */
+        .cmd-output {
+            background-color: #0c0c0c;
+            color: #cccccc;
+            border: 1px solid #333;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 30px 0;
+            font-size: 14px;
+            line-height: 1.5;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .cmd-prompt { color: #00ff00; }
+        .cmd-path { color: #ffffff; }
+        .cmd-command { color: #ffff00; }
+
+        .post-content a {
+            color: #1a1a1a;
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+
+        .post-content a:hover {
+            color: #666;
+        }
+
+        .visual-placeholder {
+            background-color: #f5f5f5;
+            border: 2px dashed #ccc;
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+            margin: 40px 0;
+            font-size: 14px;
+        }
+
+        .section-title::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 40px;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .signature {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .post-title {
+                font-size: 32px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <a href="index.html" class="logo">JF</a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="blog.html" class="active">Blog</a>
+                <a href="/cdn-cgi/l/email-protection#0268637b4268637b64677070676b70632c616d6f">Email</a>
+                <a href="https://github.com/JayLFerreira" target="_blank">GitHub</a>
+            </nav>
+        </header>
+
+        <!-- Blog Post -->
+        <article class="blog-post">
+            <div class="post-meta">January 26, 2026</div>
+            
+            <h1 class="post-title">Building a Simple, Respectful Mass Emailer on My Own Domain Using Microsoft 365</h1>
+
+            <div class="post-tags">
+                <span class="tag tag-personal">Personal Project</span>
+                <span class="tag tag-ai">AI-Assisted</span>
+            </div>
+
+            <!-- TL;DR Section -->
+            <div class="tldr-section">
+                <div class="tldr-header" onclick="toggleTLDR()">
+                    <span class="tldr-title">TL;DR</span>
+                    <span class="tldr-arrow" id="tldr-arrow">▼</span>
+                </div>
+                <div class="tldr-content" id="tldr-content">
+                    <ul>
+                        <li>Built a Python script to send batch emails via Microsoft Graph API</li>
+                        <li>Uses Excel as source, device-code auth (no secrets), with safety controls</li>
+                        <li>Emails come from real mailbox, resumable state, no third-party services</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="post-content">
+                <p>
+                    I run my email on my own domain using Microsoft 365. Like many technical people, I eventually hit a point where I wanted to send small, controlled batches of emails directly from my own mailbox without relying on third-party tools or marketing platforms.
+                </p>
+
+                <p>
+                    This post documents how I built a repeatable, script-driven mass emailer using:
+                </p>
+
+                <ul>
+                    <li>A custom domain on Microsoft 365</li>
+                    <li>Microsoft Graph (instead of SMTP)</li>
+                    <li>A simple Excel file as the source of truth</li>
+                    <li>Python for orchestration and safety controls</li>
+                </ul>
+
+                <p>
+                    The goal was not scale at all costs. The goal was control, transparency, and ownership.
+                </p>
+
+                <h2>Why not SMTP, Mailchimp, or "email tools"?</h2>
+
+                <p>
+                    If you use Microsoft 365, you'll quickly discover that:
+                </p>
+
+                <ul>
+                    <li>SMTP AUTH is often disabled at the tenant level</li>
+                    <li>Even when enabled, it's fragile and increasingly discouraged</li>
+                    <li>Marketing platforms abstract too much and add unnecessary complexity</li>
+                    <li>I wanted emails to come from my real mailbox, not a sending service</li>
+                </ul>
+
+                <p>
+                    Microsoft Graph is the supported, first-class way to send mail in modern Microsoft environments. So that's what I used.
+                </p>
+
+                <h2>High-level architecture</h2>
+
+                <p>
+                    At a high level, the flow looks like this:
+                </p>
+
+                <p>
+                    <strong>Excel → Python script → Microsoft Graph → Recipient inbox</strong>
+                </p>
+
+                <p>
+                    Nothing more.
+                </p>
+
+                <div class="visual-placeholder">
+                    [Architecture diagram: Excel feeding a Python script, which sends mail via Microsoft Graph to an inbox]
+                </div>
+
+                <h2>Step 1: Use your own domain on Microsoft 365</h2>
+
+                <p>
+                    I'm using a custom domain (for example, @mydomain.com) attached to Microsoft 365. This matters because:
+                </p>
+
+                <ul>
+                    <li>Emails come from a real mailbox</li>
+                    <li>SPF, DKIM, and DMARC are already handled properly</li>
+                    <li>Replies land directly in my inbox</li>
+                </ul>
+
+                <p>
+                    No relay servers. No spoofing. No surprises.
+                </p>
+
+                <h2>Step 2: Register a Microsoft Entra (Azure AD) application</h2>
+
+                <p>
+                    To send email programmatically, I registered an app in Microsoft Entra ID with delegated permissions, not application-wide permissions.
+                </p>
+
+                <p>
+                    <strong>What is an Entra ID app?</strong>
+                </p>
+
+                <p>
+                    A Microsoft Entra ID app registration is essentially an identity for your application within your Microsoft tenant. Think of it as a security principal that allows your script to authenticate and request specific permissions to access Microsoft services like Graph API.
+                </p>
+
+                <p>
+                    When you register an app, you're creating a trust relationship between your code and Microsoft's identity platform. This is how Microsoft knows:
+                </p>
+
+                <ul>
+                    <li>Who is requesting access (your application)</li>
+                    <li>What permissions they need (Mail.Send, User.Read, etc.)</li>
+                    <li>How they authenticate (device code, client secret, certificate)</li>
+                    <li>What scope of access they have (delegated vs. application permissions)</li>
+                </ul>
+
+                <p>
+                    The key permissions I used were:
+                </p>
+
+                <ul>
+                    <li><strong>Mail.Send</strong> - allows sending email as the authenticated user</li>
+                    <li><strong>User.Read</strong> - allows reading basic user profile information</li>
+                </ul>
+
+                <p>
+                    This allows the script to send email as me, after I authenticate once.
+                </p>
+
+                <p>
+                    For a deeper dive into app registrations and the Microsoft identity platform, see <a href="https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app" target="_blank">Microsoft's official documentation</a>.
+                </p>
+
+                <div class="visual-placeholder">
+                    [Screenshot: Azure App Registration with Graph delegated permissions granted]
+                </div>
+
+                <p>
+                    <strong>Important detail:</strong> I explicitly enabled public client flows so I could use device-code authentication without client secrets.
+                </p>
+
+                <h2>Step 3: Use Microsoft Graph with device-code authentication</h2>
+
+                <p>
+                    Instead of storing passwords or secrets, I used Microsoft's device code flow:
+                </p>
+
+                <ul>
+                    <li>First run prompts me to sign in via browser</li>
+                    <li>Tokens are cached securely on disk</li>
+                    <li>Subsequent runs reuse the token silently</li>
+                </ul>
+
+                <p>
+                    This gives me:
+                </p>
+
+                <ul>
+                    <li>No hard-coded secrets</li>
+                    <li>No password rotation issues</li>
+                    <li>Minimal blast radius if something goes wrong</li>
+                </ul>
+
+                <h3>Example: First Run Authentication</h3>
+
+                <p>
+                    When you run the script for the first time, you'll see output like this in your Windows command prompt:
+                </p>
+
+                <div class="cmd-output"><span class="cmd-prompt">C:\Users\YourName\Projects\email-sender></span><span class="cmd-command">python send_emails.py</span>
+
+To sign in, use a web browser to open the page https://microsoft.com/devicelogin
+and enter the code: <span class="cmd-path">A1B2C3D4E</span> to authenticate.
+
+Waiting for authentication...
+
+<span class="cmd-path">✓</span> Authentication successful!
+<span class="cmd-path">✓</span> Token cached to: C:\Users\YourName\.msal_cache.bin
+
+Ready to send emails.</div>
+
+                <p>
+                    After the first authentication, subsequent runs are silent and automatic since the token is cached locally.
+                </p>
+
+                <h2>Step 4: Drive everything from Excel</h2>
+
+                <p>
+                    I wanted a source of truth that was:
+                </p>
+
+                <ul>
+                    <li>Human-readable</li>
+                    <li>Easy to audit</li>
+                    <li>Easy to pause, resume, or correct</li>
+                </ul>
+
+                <p>
+                    So I used Excel with columns like:
+                </p>
+
+                <pre><code>Name | Email | Variant | Status</code></pre>
+
+                <p>
+                    The script:
+                </p>
+
+                <ul>
+                    <li>Reads rows</li>
+                    <li>Skips anything already marked as sent</li>
+                    <li>Updates Status after each email</li>
+                </ul>
+
+                <p>
+                    That makes the process resumable and safe by default.
+                </p>
+
+                <div class="visual-placeholder">
+                    [Screenshot: Excel with Name, Email, Variant, Status columns]
+                </div>
+
+                <h2>Step 5: Add safety rails in code</h2>
+
+                <p>
+                    This is where scripting beats tools.
+                </p>
+
+                <p>
+                    I built in explicit controls:
+                </p>
+
+                <ul>
+                    <li>DRY_RUN mode (prints what would send)</li>
+                    <li>MAX_SEND cap per run</li>
+                    <li>Delay between sends</li>
+                    <li>Automatic skipping of invalid or already-processed rows</li>
+                </ul>
+
+                <p>
+                    Here's a sanitized example of the core loop:
+                </p>
+
+                <pre><code><span class="keyword">for</span> row <span class="keyword">in</span> rows:
+    <span class="keyword">if</span> <span class="function">status_is_not_empty</span>(row):
+        <span class="keyword">continue</span>
+
+    <span class="keyword">if</span> sent_count >= MAX_SEND:
+        <span class="keyword">break</span>
+
+    <span class="function">send_email_via_graph</span>(
+        to=row[<span class="string">"Email"</span>],
+        body=<span class="function">render_template</span>(row)
+    )
+
+    <span class="function">mark_row_as_sent</span>(row)
+    <span class="function">sleep</span>(DELAY_SECONDS)</code></pre>
+
+                <p>
+                    That's it. No magic.
+                </p>
+
+                <h3>Example: Running in DRY_RUN Mode</h3>
+
+                <p>
+                    Before sending any real emails, I always do a dry run to verify everything looks correct:
+                </p>
+
+                <div class="cmd-output"><span class="cmd-prompt">C:\Users\YourName\Projects\email-sender></span><span class="cmd-command">python send_emails.py --dry-run</span>
+
+DRY RUN MODE - No emails will be sent
+========================================
+
+Reading: email_list.xlsx
+Found <span class="cmd-path">47</span> rows to process
+
+Row 1: Would send to <span class="cmd-path"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ce6e3e4e2cce9f4ede1fce0e9a2efe3e1">[email&#160;protected]</a></span>
+  Subject: Product Update - Q1 Features
+  Variant: customer_update
+
+Row 2: Would send to <span class="cmd-path"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b7c4d6c5d6dff7d4d8dac7d6d9ce99d4d8da">[email&#160;protected]</a></span>
+  Subject: Product Update - Q1 Features
+  Variant: customer_update
+
+Row 3: Already sent - skipping <span class="cmd-path"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b0602000e2b091e1802050e181845080406">[email&#160;protected]</a></span>
+
+...
+
+Would send <span class="cmd-path">44</span> emails
+Skipped <span class="cmd-path">3</span> already-sent rows
+
+DRY RUN COMPLETE - Review output before running for real</div>
+
+                <p>
+                    This safety check has saved me from embarrassing mistakes more than once.
+                </p>
+
+                <h2>Step 6: Avoid common pitfalls (winmail.dat, auth loops, Excel bugs)</h2>
+
+                <p>
+                    A few things I learned the hard way:
+                </p>
+
+                <ul>
+                    <li>Force HTML body format to avoid winmail.dat attachments</li>
+                    <li>Normalize Excel blanks so empty cells don't become "nan"</li>
+                    <li>Use absolute paths to avoid reading the wrong file</li>
+                    <li>Persist MSAL token cache to disk to avoid logging in every run</li>
+                </ul>
+
+                <p>
+                    None of these are hard problems, but they matter.
+                </p>
+
+                <h2>What this approach gives you</h2>
+
+                <p>
+                    This setup gives you:
+                </p>
+
+                <ul>
+                    <li>Full ownership of your sending</li>
+                    <li>Emails that come from your real mailbox</li>
+                    <li>No third-party dependency</li>
+                    <li>Clear, auditable state</li>
+                    <li>Small, intentional batch sending</li>
+                </ul>
+
+                <p>
+                    Most importantly, it proves a broader point:
+                </p>
+
+                <p>
+                    <strong>If you own your domain and understand your platform, you can build exactly what you need.</strong>
+                </p>
+            </div>
+        </article>
+
+        <!-- Footer -->
+        <footer>
+            <div class="signature">Jay Ferreira</div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTLDR() {
+            const content = document.getElementById('tldr-content');
+            const arrow = document.getElementById('tldr-arrow');
+            
+            content.classList.toggle('expanded');
+            arrow.classList.toggle('expanded');
+        }
+    </script>
+</body>
+</html>
