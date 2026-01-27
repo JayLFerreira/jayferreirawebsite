@@ -277,18 +277,35 @@
 
                 <h3>Technical Implementation</h3>
 
-                <p>
-                    The platform is built using:
-                </p>
+               <p>
+    The platform is built using:
+</p>
 
-                <ul>
-                    <li>Python for the backend syslog processing engine</li>
-                    <li>React/Next.js for the management dashboard</li>
-                    <li>FastAPI for the API layer</li>
-                    <li>PostgreSQL for storing threat intelligence and activity logs</li>
-                    <li>Docker for containerized deployment</li>
-                </ul>
+<ul>
+    <li><strong>Flask (Python)</strong> for the web framework and syslog processing engine</li>
+    <li><strong>SQLite</strong> for storing rules, EDL entries, and activity logs</li>
+    <li><strong>Jinja2 Templates</strong> for server-rendered HTML dashboard (no React/Next.js)</li>
+    <li><strong>APScheduler</strong> for background tasks (TTL cleanup every 15 minutes)</li>
+    <li><strong>Docker + Docker Compose</strong> for containerized deployment</li>
+</ul>
 
+<p style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--gray-600);">
+    <strong>File Structure:</strong>
+</p>
+
+<pre style="background: var(--gray-100); padding: 1rem; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; color: var(--text-dark);">
+logreactor/
+├── app.py                 # Main Flask application
+├── docker-compose.yml     # Container configuration
+├── Dockerfile
+├── templates/             # Jinja2 HTML templates
+│   ├── index.html        # Dashboard
+│   ├── activity.html     # Full activity log page
+│   └── ...
+├── static/               # CSS, JS, images
+├── data/                 # SQLite database, EDL files
+└── requirements.txt      # Python dependencies
+</pre>
                 <h2>Real-World Impact</h2>
 
                 <p>
