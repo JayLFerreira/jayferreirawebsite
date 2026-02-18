@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Way - Classic Card Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --felt-green: #0a5f38;
+            --card-back: #8b0000;
+            --gold: #d4af37;
+            --cream: #f5f5dc;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0a5f38 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            color: var(--cream);
+            overflow: hidden;
+        }
+
+        .game-container {
+            max-width: 1400px;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+            letter-spacing: 8px;
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--cream);
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: 1fr auto 320px;
+            gap: 15px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .board-area {
+            background: var(--felt-green);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3), 0 10px 30px var(--shadow);
+            border: 4px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .current-card-column {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-slot {
+            width: 100%;
+            aspect-ratio: 2.5 / 3.5;
+            background: rgba(0, 0, 0, 0.2);
+            border: 3px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            max-height: 100%;
+        }
+
+        .card-slot:hover:not(.filled) {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .card-slot.setup {
+            border-color: var(--gold);
+            border-width: 4px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .card-slot.filled {
+            cursor: default;
+            background: white;
+            border: 3px solid #333;
+        }
+
+        .card-slot .position-label {
+            font-size: 0.8rem;
+            color: rgba(212, 175, 55, 0.5);
+            font-weight: bold;
+        }
+
+        .playing-card {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Courier Prime', monospace;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 6px;
+            background: white;
+            position: relative;
+        }
+
+        .card-corner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .card-corner-top {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+        }
+
+        .card-corner-bottom {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            transform: rotate(180deg);
+        }
+
+        .card-rank {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .card-suit-small {
+            font-size: 1.1rem;
+            margin-top: 2px;
+        }
+
+        .card-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .card-value {
+            font-size: 3.5rem;
+            line-height: 1;
+            font-weight: bold;
+        }
+
+        .card-suit {
+            font-size: 2.5rem;
+            margin-top: 8px;
+        }
+
+        .hearts, .diamonds {
+            color: #dc143c;
+        }
+
+        .clubs, .spades {
+            color: #000;
+        }
+
+        .current-card-area {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+            border: 3px solid var(--gold);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 200px;
+        }
+
+        .current-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .cards-display {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .current-card {
+            width: 120px;
+            height: 168px;
+            background: white;
+            border: 3px solid #333;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .deck-info {
+            font-size: 0.8rem;
+            color: var(--cream);
+            margin-bottom: 5px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .score-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            border: 3px solid var(--gold);
+            flex-shrink: 0;
+        }
+
+        .score-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--cream);
+            text-align: center;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .scoring-list {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .scoring-list h4 {
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #f0d460;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px var(--shadow);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--cream);
+            border: 2px solid var(--gold);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .game-log {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid var(--gold);
+            max-height: 200px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .game-log h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .log-entry {
+            padding: 6px;
+            margin-bottom: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .log-entry.score {
+            color: #90EE90;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        #gameOverModal {
+            justify-content: flex-end;
+            padding-right: 50px;
+        }
+
+        .modal-content {
+            background: var(--felt-green);
+            border: 8px solid var(--gold);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .modal-score {
+            font-size: 4rem;
+            color: var(--cream);
+            margin: 20px 0;
+        }
+
+        .results-table {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .results-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .results-row:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 1200px) {
+            .game-board {
+                grid-template-columns: 1fr auto 280px;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .game-board {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .sidebar {
+                max-height: 300px;
+            }
+
+            .current-card-column {
+                order: 2;
+            }
+
+            .sidebar {
+                order: 3;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .title {
+                font-size: 1.5rem;
+                letter-spacing: 4px;
+            }
+
+            .subtitle {
+                font-size: 0.75rem;
+            }
+
+            .board-area {
+                padding: 15px;
+            }
+
+            .grid {
+                gap: 8px;
+            }
+
+            .current-card {
+                width: 80px;
+                height: 112px;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+        }
+
+        @keyframes cardDeal {
+            from {
+                transform: translateY(-50px) rotateY(180deg);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) rotateY(0);
+                opacity: 1;
+            }
+        }
+
+        .card-appear {
+            animation: cardDeal 0.5s ease-out;
+        }
+
+        @keyframes scorePopup {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes scorePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        .score-animation {
+            animation: scorePulse 0.6s ease-in-out;
+        }
+
+        @keyframes screenFlash {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .score-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+        }
+
+        .score-flash.active {
+            animation: screenFlash 0.8s ease-out;
+        }
+
+        .floating-score {
+            position: fixed;
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.5);
+            pointer-events: none;
+            z-index: 1000;
+            animation: floatUp 2s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1.2);
+            }
+            100% {
+                transform: translateY(-150px) scale(1);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="score-flash" id="scoreFlash"></div>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">3 WAY</h1>
+            <p class="subtitle">Classic Card Game</p>
+        </div>
+
+        <div class="game-board">
+            <div class="board-area">
+                <div class="grid" id="gameGrid">
+                    <div class="card-slot" data-position="0"><span class="position-label">1</span></div>
+                    <div class="card-slot" data-position="1"><span class="position-label">2</span></div>
+                    <div class="card-slot" data-position="2"><span class="position-label">3</span></div>
+                    <div class="card-slot" data-position="3"><span class="position-label">4</span></div>
+                    <div class="card-slot" data-position="4"><span class="position-label">5</span></div>
+                    <div class="card-slot" data-position="5"><span class="position-label">6</span></div>
+                    <div class="card-slot" data-position="6"><span class="position-label">7</span></div>
+                    <div class="card-slot" data-position="7"><span class="position-label">8</span></div>
+                    <div class="card-slot" data-position="8"><span class="position-label">9</span></div>
+                </div>
+            </div>
+
+            <div class="current-card-column">
+                <div class="current-card-area">
+                    <div class="current-card-title">Current Card(s)</div>
+                    <div class="cards-display" id="cardsDisplay">
+                        <div class="current-card" id="currentCard">
+                            <div class="card-value">?</div>
+                            <div class="card-suit">?</div>
+                        </div>
+                    </div>
+                    <div class="deck-info" id="deckInfo">Cards remaining: 20</div>
+                    <div class="deck-info" id="gameStatus">Click "New Game" to start</div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="score-panel">
+                    <div class="score-title">Score</div>
+                    <div class="score-value" id="scoreDisplay">0</div>
+                    <div class="scoring-list">
+                        <h4>Scoring System:</h4>
+                        <div>Three of a Kind: <strong>15 pts</strong></div>
+                        <div>Straight: <strong>20 pts</strong></div>
+                        <div>Flush: <strong>25 pts</strong></div>
+                        <div>Straight Flush: <strong>40 pts</strong></div>
+                        <div>Four of a Kind: <strong>+5 bonus</strong></div>
+                        <div>Four Corner Aces: <strong>200 pts</strong></div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" id="newGameBtn">New Game</button>
+                    <button class="btn btn-secondary" id="rulesBtn">How to Play</button>
+                    <button class="btn btn-secondary" id="oddsBtn">View Odds</button>
+                </div>
+
+                <div class="game-log">
+                    <h3>Game Log</h3>
+                    <div id="logEntries"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="gameOverModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Game Complete!</h2>
+            <div class="modal-score" id="finalScore">0</div>
+            <div class="results-table" id="resultsTable"></div>
+            <button class="btn btn-primary" onclick="closeModal()">Play Again</button>
+        </div>
+    </div>
+
+    <div class="modal" id="rulesModal">
+        <div class="modal-content">
+            <h2 class="modal-title">How to Play</h2>
+            <div style="text-align: left; line-height: 1.8;">
+                <p><strong>Setup:</strong></p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Deck contains only: 10, J, Q, K, A in all four suits (20 cards total)</li>
+                    <li>Your first two cards can be placed anywhere and moved around</li>
+                    <li>Once you place the third card, all positions become locked</li>
+                </ul>
+                <p><strong>Gameplay:</strong></p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Draw one card at a time</li>
+                    <li>Click an empty slot to place it</li>
+                    <li>Build poker hands in rows and columns</li>
+                </ul>
+                <p><strong>Special Bonuses:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Draw all 4 of any rank: +5 bonus points</li>
+                    <li>Place all 4 Aces on corners (positions 1,3,7,9): 200 points</li>
+                </ul>
+            </div>
+            <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 20px;">Got It!</button>
+        </div>
+    </div>
+
+    <div class="modal" id="oddsModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Probability Analysis</h2>
+            <div class="results-table" id="oddsTable"></div>
+            <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 20px;">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Card data structure
+        const suits = ['♠', '♥', '♦', '♣'];
+        const suitNames = ['spades', 'hearts', 'diamonds', 'clubs'];
+        const ranks = ['10', 'J', 'Q', 'K', 'A'];
+
+        // Game state
+        let deck = [];
+        let grid = Array(9).fill(null);
+        let currentCard = null;
+        let setupCard1 = null;
+        let setupCard2 = null;
+        let score = 0;
+        let cardsPlaced = 0;
+        let setupPhase = true;
+        let gameLog = [];
+        let drawnCards = [];
+
+        // Initialize deck
+        function createDeck() {
+            const newDeck = [];
+            ranks.forEach(rank => {
+                suits.forEach((suit, suitIndex) => {
+                    newDeck.push({ 
+                        rank: rank, 
+                        suit: suit, 
+                        suitName: suitNames[suitIndex]
+                    });
+                });
+            });
+            return shuffleDeck(newDeck);
+        }
+
+        function shuffleDeck(deck) {
+            const shuffled = [...deck];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Draw card
+        function drawCard() {
+            if (deck.length === 0) return null;
+            const card = deck.pop();
+            drawnCards.push(card);
+            return card;
+        }
+
+        // Display card
+        function displayCard(card, element) {
+            if (!card) {
+                element.innerHTML = '<div class="card-value" style="color: var(--cream);">?</div><div class="card-suit" style="color: var(--cream);">?</div>';
+                element.style.background = 'linear-gradient(135deg, var(--card-back) 0%, #600000 100%)';
+                element.style.border = '3px solid #333';
+                return;
+            }
+            
+            const colorClass = (card.suitName === 'hearts' || card.suitName === 'diamonds') ? 'hearts' : 'clubs';
+            
+            element.innerHTML = `
+                <div class="playing-card">
+                    <div class="card-corner card-corner-top">
+                        <div class="card-rank ${colorClass}">${card.rank}</div>
+                        <div class="card-suit-small ${colorClass}">${card.suit}</div>
+                    </div>
+                    <div class="card-center ${colorClass}">${card.suit}</div>
+                    <div class="card-corner card-corner-bottom">
+                        <div class="card-rank ${colorClass}">${card.rank}</div>
+                        <div class="card-suit-small ${colorClass}">${card.suit}</div>
+                    </div>
+                </div>
+            `;
+            element.style.background = 'white';
+            element.style.border = '3px solid #333';
+            element.classList.add('card-appear');
+            setTimeout(() => element.classList.remove('card-appear'), 500);
+        }
+
+        // Display setup cards (two cards shown during setup)
+        function displaySetupCards() {
+            const cardsDisplay = document.getElementById('cardsDisplay');
+            
+            if (setupPhase && setupCard1 && setupCard2) {
+                cardsDisplay.innerHTML = `
+                    <div class="current-card" id="setupCard1"></div>
+                    <div class="current-card" id="setupCard2"></div>
+                `;
+                setTimeout(() => {
+                    const card1El = document.getElementById('setupCard1');
+                    const card2El = document.getElementById('setupCard2');
+                    if (card1El) displayCard(setupCard1, card1El);
+                    if (card2El) displayCard(setupCard2, card2El);
+                }, 10);
+            } else if (currentCard) {
+                cardsDisplay.innerHTML = '<div class="current-card" id="currentCard"></div>';
+                setTimeout(() => {
+                    const cardEl = document.getElementById('currentCard');
+                    if (cardEl) displayCard(currentCard, cardEl);
+                }, 10);
+            }
+        }
+
+        // Place card on grid
+        function placeCard(position) {
+            if (grid[position] !== null) return; // Can't place on filled slot
+            
+            // During setup phase (first 2 cards)
+            if (setupPhase && cardsPlaced < 2) {
+                let cardToPlace;
+                
+                // Determine which setup card to place
+                if (cardsPlaced === 0) {
+                    cardToPlace = setupCard1;
+                } else {
+                    cardToPlace = setupCard2;
+                }
+                
+                if (!cardToPlace) return;
+                
+                // Place the card
+                grid[position] = cardToPlace;
+                const slot = document.querySelector(`[data-position="${position}"]`);
+                slot.classList.add('filled');
+                slot.classList.remove('setup');
+                
+                const colorClass = (cardToPlace.suitName === 'hearts' || cardToPlace.suitName === 'diamonds') ? 'hearts' : 'clubs';
+                slot.innerHTML = `
+                    <div class="playing-card">
+                        <div class="card-corner card-corner-top">
+                            <div class="card-rank ${colorClass}">${cardToPlace.rank}</div>
+                            <div class="card-suit-small ${colorClass}">${cardToPlace.suit}</div>
+                        </div>
+                        <div class="card-center ${colorClass}">${cardToPlace.suit}</div>
+                        <div class="card-corner card-corner-bottom">
+                            <div class="card-rank ${colorClass}">${cardToPlace.rank}</div>
+                            <div class="card-suit-small ${colorClass}">${cardToPlace.suit}</div>
+                        </div>
+                    </div>
+                `;
+
+                cardsPlaced++;
+                addLog(`Placed ${cardToPlace.rank}${cardToPlace.suit} at position ${position + 1}`);
+
+                if (cardsPlaced === 2) {
+                    // Setup complete, move to normal play
+                    setupPhase = false;
+                    setupCard1 = null;
+                    setupCard2 = null;
+                    currentCard = drawCard();
+                    displaySetupCards();
+                    addLog('Setup complete! Continue placing cards one at a time.', 'score');
+                    document.getElementById('gameStatus').textContent = 'Click a slot to place the card';
+                    
+                    // Check for scoring after setup
+                    checkForNewScoring();
+                } else {
+                    document.getElementById('gameStatus').textContent = 'Place your second card';
+                }
+                
+                updateDeckInfo();
+            } else {
+                // After setup, normal placement (one card at a time)
+                if (!currentCard) return;
+
+                grid[position] = currentCard;
+                const slot = document.querySelector(`[data-position="${position}"]`);
+                slot.classList.add('filled');
+                
+                const colorClass = (currentCard.suitName === 'hearts' || currentCard.suitName === 'diamonds') ? 'hearts' : 'clubs';
+                slot.innerHTML = `
+                    <div class="playing-card">
+                        <div class="card-corner card-corner-top">
+                            <div class="card-rank ${colorClass}">${currentCard.rank}</div>
+                            <div class="card-suit-small ${colorClass}">${currentCard.suit}</div>
+                        </div>
+                        <div class="card-center ${colorClass}">${currentCard.suit}</div>
+                        <div class="card-corner card-corner-bottom">
+                            <div class="card-rank ${colorClass}">${currentCard.rank}</div>
+                            <div class="card-suit-small ${colorClass}">${currentCard.suit}</div>
+                        </div>
+                    </div>
+                `;
+
+                cardsPlaced++;
+                addLog(`Placed ${currentCard.rank}${currentCard.suit} at position ${position + 1}`);
+
+                // Check if game is complete
+                if (cardsPlaced === 9) {
+                    checkForNewScoring(); // Final score check
+                    setTimeout(() => endGame(), 1000); // Delay to show final animation
+                    return;
+                }
+
+                currentCard = drawCard();
+                if (currentCard) {
+                    displaySetupCards();
+                    updateDeckInfo();
+                    
+                    // Check for new scoring after placement
+                    checkForNewScoring();
+                } else {
+                    endGame();
+                }
+            }
+        }
+
+        // Scoring logic
+        function evaluateHand(cards) {
+            if (cards.some(c => c === null)) return null;
+
+            const ranks = cards.map(c => c.rank);
+            const suits = cards.map(c => c.suit);
+            
+            // Check flush
+            const isFlush = suits.every(s => s === suits[0]);
+            
+            // Check straight - any order counts
+            const rankValues = {
+                '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
+            };
+            const sortedValues = ranks.map(r => rankValues[r]).sort((a, b) => a - b);
+            const isStraight = sortedValues[2] - sortedValues[0] === 2 && 
+                               sortedValues[1] - sortedValues[0] === 1;
+            
+            // Check three of a kind
+            const rankCounts = {};
+            ranks.forEach(r => rankCounts[r] = (rankCounts[r] || 0) + 1);
+            const isThreeOfKind = Object.values(rankCounts).includes(3);
+
+            if (isFlush && isStraight) return { type: 'Straight Flush', points: 40 };
+            if (isFlush) return { type: 'Flush', points: 25 };
+            if (isStraight) return { type: 'Straight', points: 20 };
+            if (isThreeOfKind) return { type: 'Three of a Kind', points: 15 };
+            
+            return null;
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            const scoringHands = [];
+
+            // Check rows
+            for (let i = 0; i < 3; i++) {
+                const row = [grid[i * 3], grid[i * 3 + 1], grid[i * 3 + 2]];
+                const result = evaluateHand(row);
+                if (result) {
+                    totalScore += result.points;
+                    scoringHands.push(`Row ${i + 1}: ${result.type} (+${result.points})`);
+                }
+            }
+
+            // Check columns
+            for (let i = 0; i < 3; i++) {
+                const col = [grid[i], grid[i + 3], grid[i + 6]];
+                const result = evaluateHand(col);
+                if (result) {
+                    totalScore += result.points;
+                    scoringHands.push(`Column ${i + 1}: ${result.type} (+${result.points})`);
+                }
+            }
+
+            // Check diagonals
+            const diagonal1 = [grid[0], grid[4], grid[8]]; // Top-left to bottom-right
+            const result1 = evaluateHand(diagonal1);
+            if (result1) {
+                totalScore += result1.points;
+                scoringHands.push(`Diagonal \\: ${result1.type} (+${result1.points})`);
+            }
+
+            const diagonal2 = [grid[2], grid[4], grid[6]]; // Top-right to bottom-left
+            const result2 = evaluateHand(diagonal2);
+            if (result2) {
+                totalScore += result2.points;
+                scoringHands.push(`Diagonal /: ${result2.type} (+${result2.points})`);
+            }
+
+            // Check four of a kind bonus
+            const rankCounts = {};
+            drawnCards.forEach(card => {
+                rankCounts[card.rank] = (rankCounts[card.rank] || 0) + 1;
+            });
+            Object.entries(rankCounts).forEach(([rank, count]) => {
+                if (count === 4) {
+                    totalScore += 5;
+                    scoringHands.push(`Four ${rank}s drawn: Bonus (+5)`);
+                }
+            });
+
+            // Check four corner aces
+            const corners = [0, 2, 6, 8];
+            const cornerCards = corners.map(pos => grid[pos]);
+            if (cornerCards.every(c => c && c.rank === 'A')) {
+                totalScore += 200;
+                scoringHands.push('Four Corner Aces: JACKPOT (+200)');
+            }
+
+            return { totalScore, scoringHands };
+        }
+
+        // Check for new scoring after card placement
+        function checkForNewScoring() {
+            const { totalScore, scoringHands } = calculateScore();
+            const oldScore = score;
+            
+            if (totalScore > oldScore) {
+                const pointsGained = totalScore - oldScore;
+                score = totalScore;
+                
+                // Trigger animations
+                triggerScoreAnimation(pointsGained);
+                
+                // Update score display with animation
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                scoreDisplay.textContent = totalScore;
+                scoreDisplay.classList.add('score-animation');
+                setTimeout(() => scoreDisplay.classList.remove('score-animation'), 600);
+                
+                // Add to log
+                addLog(`🎯 Scored ${pointsGained} points!`, 'score');
+            }
+        }
+
+        // Trigger screen flash and floating score animation
+        function triggerScoreAnimation(points) {
+            // Screen flash
+            const flash = document.getElementById('scoreFlash');
+            flash.classList.add('active');
+            setTimeout(() => flash.classList.remove('active'), 800);
+            
+            // Floating score text
+            const floatingScore = document.createElement('div');
+            floatingScore.className = 'floating-score';
+            floatingScore.textContent = `+${points}`;
+            floatingScore.style.left = '50%';
+            floatingScore.style.top = '40%';
+            floatingScore.style.transform = 'translateX(-50%)';
+            document.body.appendChild(floatingScore);
+            
+            setTimeout(() => {
+                document.body.removeChild(floatingScore);
+            }, 2000);
+        }
+
+        function endGame() {
+            const { totalScore, scoringHands } = calculateScore();
+            score = totalScore;
+            
+            document.getElementById('finalScore').textContent = totalScore;
+            
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = scoringHands.map(hand => `
+                <div class="results-row">
+                    <span>${hand.split(':')[0]}</span>
+                    <span style="color: var(--gold); font-weight: bold;">${hand.split(':')[1]}</span>
+                </div>
+            `).join('') || '<div class="results-row"><span>No scoring hands</span><span>0 pts</span></div>';
+            
+            document.getElementById('scoreDisplay').textContent = totalScore;
+            document.getElementById('gameOverModal').classList.add('show');
+            
+            addLog(`Game Over! Final Score: ${totalScore}`, 'score');
+        }
+
+        // UI functions
+        function updateDeckInfo() {
+            document.getElementById('deckInfo').textContent = `Cards remaining: ${deck.length}`;
+            document.getElementById('gameStatus').textContent = 'Setup: Place first 2 cards (you can move them)';
+        }
+
+        function addLog(message, type = '') {
+            gameLog.unshift({ message, type });
+            if (gameLog.length > 20) gameLog.pop();
+            
+            const logEntries = document.getElementById('logEntries');
+            logEntries.innerHTML = gameLog.map(log => 
+                `<div class="log-entry ${log.type}">${log.message}</div>`
+            ).join('');
+        }
+
+        function newGame() {
+            deck = createDeck();
+            grid = Array(9).fill(null);
+            currentCard = null;
+            setupCard1 = null;
+            setupCard2 = null;
+            score = 0;
+            cardsPlaced = 0;
+            setupPhase = true;
+            gameLog = [];
+            drawnCards = [];
+            
+            document.querySelectorAll('.card-slot').forEach((slot, i) => {
+                slot.innerHTML = `<span class="position-label">${i + 1}</span>`;
+                slot.classList.remove('filled', 'setup');
+            });
+            
+            // Draw two cards for setup
+            setupCard1 = drawCard();
+            setupCard2 = drawCard();
+            displaySetupCards();
+            
+            document.getElementById('scoreDisplay').textContent = '0';
+            updateDeckInfo();
+            document.getElementById('gameStatus').textContent = 'Place your first two cards to set up the board';
+            addLog('New game started! Place your first 2 cards.', 'score');
+            document.getElementById('logEntries').innerHTML = '';
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('show'));
+            if (cardsPlaced === 9) newGame();
+        }
+
+        // Calculate odds (simplified Monte Carlo simulation)
+        function calculateOdds() {
+            const simulations = 100000;
+            const results = {
+                'Three of a Kind': 0,
+                'Straight': 0,
+                'Flush': 0,
+                'Straight Flush': 0,
+                'Four of a Kind Drawn': 0,
+                'Four Corner Aces': 0
+            };
+
+            for (let i = 0; i < simulations; i++) {
+                const tempDeck = createDeck();
+                const tempDrawn = [];
+                const tempGrid = Array(9).fill(null);
+                
+                // Draw 9 cards
+                for (let j = 0; j < 9; j++) {
+                    tempDrawn.push(tempDeck.pop());
+                }
+                
+                // Random placement
+                tempDrawn.forEach((card, idx) => {
+                    tempGrid[idx] = card;
+                });
+
+                // Check rows and columns
+                for (let r = 0; r < 3; r++) {
+                    const row = [tempGrid[r * 3], tempGrid[r * 3 + 1], tempGrid[r * 3 + 2]];
+                    const rowResult = evaluateHand(row);
+                    if (rowResult) results[rowResult.type]++;
+                }
+                
+                for (let c = 0; c < 3; c++) {
+                    const col = [tempGrid[c], tempGrid[c + 3], tempGrid[c + 6]];
+                    const colResult = evaluateHand(col);
+                    if (colResult) results[colResult.type]++;
+                }
+
+                // Check four of a kind
+                const rankCounts = {};
+                tempDrawn.forEach(card => {
+                    rankCounts[card.rank] = (rankCounts[card.rank] || 0) + 1;
+                });
+                if (Object.values(rankCounts).includes(4)) {
+                    results['Four of a Kind Drawn']++;
+                }
+
+                // Check corner aces
+                const corners = [0, 2, 6, 8];
+                if (corners.every(pos => tempGrid[pos] && tempGrid[pos].rank === 'A')) {
+                    results['Four Corner Aces']++;
+                }
+            }
+
+            return Object.entries(results).map(([hand, count]) => ({
+                hand,
+                probability: ((count / simulations) * 100).toFixed(4) + '%',
+                expectedPerGame: (count / simulations * 6).toFixed(2)
+            }));
+        }
+
+        // Event listeners
+        document.getElementById('newGameBtn').addEventListener('click', newGame);
+        
+        document.getElementById('rulesBtn').addEventListener('click', () => {
+            document.getElementById('rulesModal').classList.add('show');
+        });
+
+        document.getElementById('oddsBtn').addEventListener('click', () => {
+            const odds = calculateOdds();
+            const oddsTable = document.getElementById('oddsTable');
+            oddsTable.innerHTML = odds.map(item => `
+                <div class="results-row">
+                    <span>${item.hand}</span>
+                    <span style="color: var(--gold);">${item.probability}</span>
+                </div>
+                <div style="font-size: 0.8rem; padding: 5px 10px; opacity: 0.8;">
+                    Expected per game: ${item.expectedPerGame}
+                </div>
+            `).join('');
+            document.getElementById('oddsModal').classList.add('show');
+        });
+
+        document.querySelectorAll('.card-slot').forEach((slot, index) => {
+            slot.addEventListener('click', () => placeCard(index));
+        });
+
+        // Initialize
+        newGame();
+    </script>
+</body>
+</html>
