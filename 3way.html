@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3 Way - Classic Card Game</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -708,6 +708,71 @@
         </div>
     </div>
 
+    <div class="modal show" id="welcomeModal">
+        <div class="modal-content" style="max-width: 720px;">
+            <h2 class="modal-title" style="font-size: 3rem; margin-bottom: 6px;">3 WAY</h2>
+            <p style="text-align: center; font-family: 'Inter', sans-serif; font-size: 1rem; opacity: 0.8; margin-bottom: 24px; letter-spacing: 0.5px;">Every card hits in 3 directions.</p>
+
+            <div style="text-align: left; line-height: 1.75; font-size: 1rem; font-family: 'Inter', sans-serif; color: #e8e4d4;">
+                <p style="margin-bottom: 6px;">You have <strong style="color: var(--cream);">9 moves</strong>. That's it.</p>
+                <p style="margin-bottom: 20px;">Fill the 3×3 grid and score poker hands across<br><strong style="color: var(--cream);">Rows. Columns. Diagonals.</strong><br>That's 8 chances to score.</p>
+
+                <p style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 6px;">The Deck</p>
+                <p style="margin-bottom: 20px;">Only 10, J, Q, K, A in all suits.<br>Every card is dangerous.</p>
+
+                <p style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 10px;">How It Flows</p>
+                <div style="margin-bottom: 20px;">
+                    <div style="padding: 5px 0;">• Place your first 2 cards to shape your board</div>
+                    <div style="padding: 5px 0;">• Then draw 1 card at a time</div>
+                    <div style="padding: 5px 0;">• No swaps. No undo. Every click matters.</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                    <div>
+                        <p style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 8px;">Score Big</p>
+                        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px 16px;">
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(212,175,55,0.2);">
+                                <span>Three of a Kind</span><span style="color: var(--gold); font-weight: bold;">15</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(212,175,55,0.2);">
+                                <span>Straight</span><span style="color: var(--gold); font-weight: bold;">20</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(212,175,55,0.2);">
+                                <span>Flush</span><span style="color: var(--gold); font-weight: bold;">25</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                                <span>Straight Flush</span><span style="color: var(--gold); font-weight: bold;">40</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <p style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 8px;">Chase the Bonuses</p>
+                        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px 16px;">
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(212,175,55,0.2);">
+                                <span>Draw all 4 of a rank</span><span style="color: var(--gold); font-weight: bold;">+5</span>
+                            </div>
+                            <div style="padding: 5px 0;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Aces in all 4 corners</span><span style="color: var(--gold); font-weight: bold;">+200</span>
+                                </div>
+                                <div style="color: var(--gold); font-size: 0.8rem; opacity: 0.8; margin-top: 2px;">JACKPOT</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="background: rgba(212,175,55,0.1); border-left: 3px solid var(--gold); padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 20px; font-style: italic;">
+                    The center touches 4 scoring lines. Use it wisely.
+                </p>
+
+                <p style="margin-bottom: 6px;">Think ahead. Build combos. Chase the corner Aces.</p>
+                <p style="font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--cream);">Ready to test your instincts?</p>
+            </div>
+
+            <button class="btn btn-primary" onclick="startGame()" style="margin-top: 28px; width: 100%; font-size: 1.1rem; padding: 16px; font-family: 'Inter', sans-serif; letter-spacing: 2px;">START</button>
+        </div>
+    </div>
+
     <div class="modal" id="oddsModal">
         <div class="modal-content">
             <h2 class="modal-title">Probability Analysis</h2>
@@ -1220,8 +1285,13 @@
             slot.addEventListener('click', () => placeCard(index));
         });
 
-        // Initialize
-        newGame();
+        function startGame() {
+            document.getElementById('welcomeModal').classList.remove('show');
+            newGame();
+        }
+
+        // Initialize (don't auto-start; welcome modal handles first launch)
+
     </script>
 </body>
 </html>
