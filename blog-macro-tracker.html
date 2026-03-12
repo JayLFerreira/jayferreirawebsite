@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building a Macro Tracker - Jay Ferreira</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist Mono', 'Courier New', monospace;
+            background-color: #fafafa;
+            color: #111111;
+            line-height: 1.8;
+            font-weight: 400;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 60px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            background-color: #111111;
+            color: #fff;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #111111;
+        }
+
+        /* Back Link */
+        .back-link {
+            margin-bottom: 40px;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link a:hover {
+            color: #111111;
+        }
+
+        /* Article */
+        article {
+            margin-bottom: 80px;
+        }
+
+        .article-title {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        .article-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .article-content {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .article-content h2 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-content h3 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-content p {
+            margin-bottom: 20px;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+        }
+
+        .article-content code {
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Geist Mono', 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .article-content pre {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .article-content pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #000;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Screenshots */
+        .screenshot {
+            width: 100%;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin: 30px 0;
+            display: block;
+        }
+
+        .screenshot-caption {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            margin-top: -20px;
+            margin-bottom: 30px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .signature-img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .footer-name {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 32px;
+            }
+
+            .article-content h2 {
+                font-size: 24px;
+            }
+
+            nav {
+                gap: 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <a href="index.html" class="logo">JF</a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="blog.html" class="active">Blog</a>
+                <a href="mailto:jay@jayferreira.com">Email</a>
+                <a href="https://github.com/JayLFerreira" target="_blank">GitHub</a>
+            </nav>
+        </header>
+
+        <!-- Back Link -->
+        <div class="back-link">
+            <a href="blog.html">← Back to Blog</a>
+        </div>
+
+        <!-- Article -->
+        <article>
+            <h1 class="article-title">Building a Macro Tracker for the Office Athlete</h1>
+            <div class="article-meta">March 12, 2026 / Health / 6 min read</div>
+
+            <div class="article-content">
+                <p>
+                    Nutrition apps are either overkill or too simple. I wanted something in between —
+                    a tracker that shows me exactly what I need, lets me log food fast, and gives me
+                    a clear picture of whether I'm actually hitting my goals. So I built one.
+                </p>
+
+                <p>
+                    The app is aimed at the "office athlete" — someone who cares about their health and
+                    trains regularly, but doesn't have time to spend 20 minutes logging a meal.
+                    The whole thing is built around speed of entry and clarity of feedback.
+                </p>
+
+                <h2>The Dashboard</h2>
+
+                <p>
+                    The main screen shows everything that matters at a glance: calories, protein, fiber,
+                    and water — each as a circular progress ring with a percentage filled and your current
+                    intake versus your daily goal.
+                </p>
+
+                <img src="macro1.png" alt="Today's Tracker dashboard showing progress rings for calories, protein, fiber, and water" class="screenshot">
+                <p class="screenshot-caption">The main dashboard — profile card on the left, macro rings on the right, water tracking at the bottom.</p>
+
+                <p>
+                    On the left is a profile card showing your name, height, weight, and goal (in my case,
+                    lose weight). There's also a Macro Wizard button that calculates your targets automatically
+                    based on your stats, and a Macro Breakdown donut chart that updates in real time as you log
+                    food throughout the day, showing the ratio of fat, protein, and carbs in what you've actually eaten —
+                    compared to your goal split.
+                </p>
+
+                <p>
+                    Water tracking lives at the bottom with quick-add buttons (-1 cup, +1 cup, +2 cups) so
+                    you never have to open a separate screen just to log a glass of water.
+                </p>
+
+                <h2>Logging Food</h2>
+
+                <p>
+                    The food entry screen is where most of the time is saved. Instead of searching a
+                    database item by item, you type out your meal in natural language — one item per line.
+                    The app sends that to an AI that parses and returns the macros for each line.
+                </p>
+
+                <img src="macro2.png" alt="Add Food Entry screen with natural language input, saved meals panel, and today's entries table" class="screenshot">
+                <p class="screenshot-caption">Food entry screen — natural language input on the left, saved meals on the right, and today's log below.</p>
+
+                <p>
+                    You assign a meal category (Breakfast, Lunch, Dinner, etc.) and optionally check
+                    "Save as meal for later" to build up a library of your go-to meals. The Saved Meals
+                    panel on the right lets you click any saved meal to load it directly — so your
+                    pre/post workout shake goes in with one click instead of re-entering it every time.
+                </p>
+
+                <p>
+                    Below the input is Today's Entries — a table showing every food logged so far with
+                    full macro columns: calories, protein, carbs, fat, and fiber. Each row has Edit and
+                    Delete buttons for quick corrections.
+                </p>
+
+                <h2>History &amp; Trends</h2>
+
+                <p>
+                    Knowing today's numbers is useful, but seeing patterns over time is what actually
+                    drives behavior change. The History page gives you two views: a calendar and a trends chart.
+                </p>
+
+                <img src="macro4.png" alt="History page showing a color-coded calendar for March 2026 with daily calorie totals" class="screenshot">
+                <p class="screenshot-caption">History page — color-coded calendar showing daily calorie performance, with export and trend controls below.</p>
+
+                <p>
+                    The calendar colors each day based on how close you were to your calorie goal:
+                    green means goals met, yellow means within 16–20%, and red means off track by more
+                    than 20%. White days have no data. At a glance you can see which days were solid
+                    and which went sideways. There's also an Export CSV button to pull your full history
+                    into a spreadsheet.
+                </p>
+
+                <img src="macro3.png" alt="Trends charts showing weekly line graphs for calories, protein, fat, carbs, and fiber with goal reference lines" class="screenshot">
+                <p class="screenshot-caption">Trends section — individual line charts per macro over 7 days, each with a dashed goal reference line.</p>
+
+                <p>
+                    The Trends section renders individual line charts for each macro — calories, protein,
+                    fat, carbs, and fiber — over 7, 30, or 90 days. Each chart has a dashed horizontal
+                    line showing your target for that metric, so you can see at a glance whether you're
+                    consistently over or under. The week shown here (03/06–03/12) makes it obvious that
+                    03/07 was a low day across the board, while 03/10 was a high day for fat intake.
+                </p>
+
+                <h2>Tech Stack</h2>
+
+                <p>
+                    The stack is intentionally simple — no heavy framework, no complex build pipeline:
+                </p>
+
+                <ul>
+                    <li><strong>Flask (Python)</strong> — backend routing, session management, and API endpoints</li>
+                    <li><strong>SQLite</strong> — all user data, food logs, and saved meals stored locally</li>
+                    <li><strong>Claude API</strong> — natural language food parsing, returns structured macro data per item</li>
+                    <li><strong>Chart.js</strong> — trend line charts rendered client-side</li>
+                    <li><strong>Vanilla JS + HTML/CSS</strong> — no frontend framework, keeps it fast and easy to maintain</li>
+                </ul>
+
+                <p>
+                    The AI food parsing is the core feature that makes fast entry possible. You type
+                    something like "2 eggs, 2 slices whole wheat bread, 1 oz butter" and get back
+                    accurate macros for each item without touching a search box. The prompt asks for
+                    specificity — raw vs cooked, weight vs volume — so the numbers stay accurate.
+                </p>
+
+                <h2>What I'd Improve</h2>
+
+                <p>
+                    There are a few things on the list for the next pass:
+                </p>
+
+                <ol>
+                    <li><strong>Weight tracking</strong> — the trends page already has a Weight filter button, it just needs the data behind it</li>
+                    <li><strong>Mobile layout</strong> — the dashboard is usable on mobile but the tables get cramped on small screens</li>
+                    <li><strong>Weekly summary emails</strong> — a Sunday digest showing your week at a glance would be a useful nudge</li>
+                    <li><strong>Barcode scanning</strong> — for packaged foods, typing is slower than scanning</li>
+                </ol>
+
+                <p>
+                    For now the core loop works well: log fast, see where you stand, check the week.
+                    If you're tracking macros and tired of apps that make it harder than it needs to be,
+                    this is the approach I'd recommend building toward.
+                </p>
+            </div>
+        </article>
+
+        <!-- Footer -->
+        <footer>
+            <img src="signature.png" alt="Jay Ferreira Signature" class="signature-img">
+            <div class="footer-name">jay ferreira</div>
+        </footer>
+    </div>
+</body>
+</html>
