@@ -169,20 +169,56 @@
         }
 
         /* Screenshots */
+        .screenshot-link {
+            display: block;
+            margin: 30px 0 10px;
+            cursor: zoom-in;
+        }
+
         .screenshot {
-            width: 100%;
+            max-width: 100%;
+            width: auto;
+            height: auto;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
-            margin: 30px 0;
             display: block;
+            transition: opacity 0.2s ease;
+        }
+
+        .screenshot-link:hover .screenshot {
+            opacity: 0.85;
         }
 
         .screenshot-caption {
             font-size: 13px;
             color: #999;
             text-align: center;
-            margin-top: -20px;
             margin-bottom: 30px;
+        }
+
+        /* Lightbox */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+        }
+
+        .lightbox-overlay img {
+            max-width: 95vw;
+            max-height: 92vh;
+            width: auto;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
         }
 
         /* Footer */
@@ -264,7 +300,9 @@
                     intake versus your daily goal.
                 </p>
 
-                <img src="macro1.png" alt="Today's Tracker dashboard showing progress rings for calories, protein, fiber, and water" class="screenshot">
+                <a href="macro1.png" class="screenshot-link" onclick="openLightbox(this);return false;">
+                    <img src="macro1.png" alt="Today's Tracker dashboard showing progress rings for calories, protein, fiber, and water" class="screenshot">
+                </a>
                 <p class="screenshot-caption">The main dashboard — profile card on the left, macro rings on the right, water tracking at the bottom.</p>
 
                 <p>
@@ -288,7 +326,9 @@
                     The app sends that to an AI that parses and returns the macros for each line.
                 </p>
 
-                <img src="macro2.png" alt="Add Food Entry screen with natural language input, saved meals panel, and today's entries table" class="screenshot">
+                <a href="macro2.png" class="screenshot-link" onclick="openLightbox(this);return false;">
+                    <img src="macro2.png" alt="Add Food Entry screen with natural language input, saved meals panel, and today's entries table" class="screenshot">
+                </a>
                 <p class="screenshot-caption">Food entry screen — natural language input on the left, saved meals on the right, and today's log below.</p>
 
                 <p>
@@ -311,7 +351,9 @@
                     drives behavior change. The History page gives you two views: a calendar and a trends chart.
                 </p>
 
-                <img src="macro4.png" alt="History page showing a color-coded calendar for March 2026 with daily calorie totals" class="screenshot">
+                <a href="macro4.png" class="screenshot-link" onclick="openLightbox(this);return false;">
+                    <img src="macro4.png" alt="History page showing a color-coded calendar for March 2026 with daily calorie totals" class="screenshot">
+                </a>
                 <p class="screenshot-caption">History page — color-coded calendar showing daily calorie performance, with export and trend controls below.</p>
 
                 <p>
@@ -322,7 +364,9 @@
                     into a spreadsheet.
                 </p>
 
-                <img src="macro3.png" alt="Trends charts showing weekly line graphs for calories, protein, fat, carbs, and fiber with goal reference lines" class="screenshot">
+                <a href="macro3.png" class="screenshot-link" onclick="openLightbox(this);return false;">
+                    <img src="macro3.png" alt="Trends charts showing weekly line graphs for calories, protein, fat, carbs, and fiber with goal reference lines" class="screenshot">
+                </a>
                 <p class="screenshot-caption">Trends section — individual line charts per macro over 7 days, each with a dashed goal reference line.</p>
 
                 <p>
@@ -331,6 +375,46 @@
                     line showing your target for that metric, so you can see at a glance whether you're
                     consistently over or under. The week shown here (03/06–03/12) makes it obvious that
                     03/07 was a low day across the board, while 03/10 was a high day for fat intake.
+                </p>
+
+                <h2>Micronutrients</h2>
+
+                <p>
+                    Most trackers stop at calories and macros. This one goes further with a dedicated
+                    micronutrients page that shows your weekly intake of vitamins and minerals against
+                    your 7-day RDA targets.
+                </p>
+
+                <a href="macro5.png" class="screenshot-link" onclick="openLightbox(this);return false;">
+                    <img src="macro5.png" alt="Weekly Micronutrients page showing progress bars for vitamins and minerals against weekly RDA goals" class="screenshot">
+                </a>
+                <p class="screenshot-caption">Weekly Micronutrients — color-coded progress bars for every tracked vitamin and mineral, with an Analyze Weaknesses shortcut.</p>
+
+                <p>
+                    Every nutrient gets a horizontal progress bar that fills from red through orange to
+                    green as you approach the goal. The page breaks down into two groups — Vitamins
+                    (A, C, D, E, K, and the full B complex through B12, plus folate and choline) and
+                    Minerals (calcium, iron, magnesium, phosphorus, potassium, sodium, and more). Each
+                    row shows the exact current value alongside your weekly target, so you know precisely
+                    how far off you are, not just a vague percentage.
+                </p>
+
+                <p>
+                    You can toggle between Today and This Week, and there's an Analyze Weaknesses
+                    button that surfaces which nutrients are consistently falling short — useful for
+                    figuring out whether a deficiency is a one-off or a pattern.
+                </p>
+
+                <h2>Dark Mode &amp; Light Mode</h2>
+
+                <p>
+                    The app ships with both a dark and a light theme. The dashboard, food entry, trends,
+                    and history pages all run in dark mode by default — dark backgrounds, muted card
+                    surfaces, and colored accents that pop without eye strain in a dim room or at a desk
+                    late in the day. The micronutrients page shown above is the same app in light mode —
+                    clean white surfaces, gray progress tracks, and the same color-coded bars. Both
+                    themes are fully styled; nothing is just an inverted color dump. You switch between
+                    them with a single toggle and the preference is saved.
                 </p>
 
                 <h2>Tech Stack</h2>
@@ -381,5 +465,27 @@
             <div class="footer-name">jay ferreira</div>
         </footer>
     </div>
+    <!-- Lightbox -->
+    <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        function openLightbox(link) {
+            const overlay = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = link.href;
+            img.alt = link.querySelector('img').alt;
+            overlay.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
 </body>
 </html>
