@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DumpsterSites: Finding Local Businesses with Bad Websites at Scale - Jay Ferreira</title>
+    <meta name="description" content="DumpsterSites is a local desktop tool that finds and scores local businesses with bad or missing websites, so you can qualify leads before making a single call.">
+    <meta name="keywords" content="DumpsterSites, local business leads, website rebuild, freelance web developer, lead generation, web design side hustle">
+    <meta name="author" content="Jay Ferreira">
+    <meta property="og:title" content="DumpsterSites: Finding Local Businesses with Bad Websites at Scale">
+    <meta property="og:description" content="A desktop tool that finds local businesses with bad or missing websites at scale. Qualify leads before making a single cold call.">
+    <meta property="og:image" content="dumpster1.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DumpsterSites: Finding Local Businesses with Bad Websites at Scale">
+    <meta name="twitter:description" content="A desktop tool that finds local businesses with bad or missing websites at scale. Qualify leads before making a single cold call.">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "DumpsterSites: Finding Local Businesses with Bad Websites at Scale",
+        "description": "DumpsterSites is a local desktop tool that finds and scores local businesses with bad or missing websites, so you can qualify leads before making a single call.",
+        "author": {
+            "@type": "Person",
+            "name": "Jay Ferreira"
+        },
+        "datePublished": "2026-05-01"
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist Mono', 'Courier New', monospace;
+            background-color: #fafafa;
+            color: #111111;
+            line-height: 1.8;
+            font-weight: 400;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 60px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            background-color: #111111;
+            color: #fff;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #111111;
+        }
+
+        /* Back Link */
+        .back-link {
+            margin-bottom: 40px;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link a:hover {
+            color: #111111;
+        }
+
+        /* Article */
+        article {
+            margin-bottom: 80px;
+        }
+
+        .article-title {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        .article-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .article-content {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .article-content h2 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-content h3 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-content p {
+            margin-bottom: 20px;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+        }
+
+        .article-content code {
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Geist Mono', 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .article-content pre {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .article-content pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #000;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Screenshots */
+        .screenshot-link {
+            display: block;
+            margin: 30px 0 10px;
+            cursor: zoom-in;
+        }
+
+        .screenshot {
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            display: block;
+            transition: opacity 0.2s ease;
+        }
+
+        .screenshot-link:hover .screenshot {
+            opacity: 0.85;
+        }
+
+        .screenshot-caption {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Lightbox */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+        }
+
+        .lightbox-overlay img {
+            max-width: 95vw;
+            max-height: 92vh;
+            width: auto;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .signature-img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .footer-name {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 32px;
+            }
+
+            .article-content h2 {
+                font-size: 24px;
+            }
+
+            nav {
+                gap: 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <a href="index.html" class="logo">JF</a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="blog.html" class="active">Blog</a>
+                <a href="mailto:jay@jayferreira.com">Email</a>
+                <a href="https://github.com/JayLFerreira" target="_blank">GitHub</a>
+            </nav>
+        </header>
+
+        <!-- Back Link -->
+        <div class="back-link">
+            <a href="blog.html">← Back to Blog</a>
+        </div>
+
+        <!-- Article -->
+        <article>
+            <h1 class="article-title">DumpsterSites: Finding Local Businesses with Bad Websites at Scale</h1>
+            <div class="article-meta">May 1, 2026 / Tools / 7 min read</div>
+
+            <div class="article-content">
+
+                <h2>The YouTube Arbitrage Play, and Why Most People Are Winging It</h2>
+
+                <p>
+                    There's a side hustle making the rounds on YouTube and TikTok right now. The pitch goes like this:
+                    search Google Maps for local businesses in your area, find ones with ugly or missing websites,
+                    spin up an AI-generated site in an afternoon, cold-call the owner, and flip the site for $500–$2,000.
+                    Rinse and repeat.
+                </p>
+
+                <p>
+                    It works. The market is real. Local businesses like dentists, HVAC companies, plumbers, and
+                    landscapers are often sitting on websites that were built in 2009 and haven't been touched since.
+                    No mobile layout. Running HTTP. Table-based design. They're leaving money on the table every day
+                    and most of them know it.
+                </p>
+
+                <p>
+                    The problem is the workflow most people are using: open Maps, eyeball a listing, check if the site
+                    looks bad, move on. It's manual, it's slow, and "looks bad" is completely subjective. You end up
+                    spending 40 minutes finding 10 leads, half of which aren't actually worth pitching, and you've got
+                    nothing to show for your time except a messy browser tab collection.
+                </p>
+
+                <p>
+                    I built DumpsterSites to solve that. Qualify first, pitch second.
+                </p>
+
+                <h2>What DumpsterSites Does</h2>
+
+                <p>
+                    DumpsterSites runs locally via Docker. You give it a search query like
+                    <code>dentists Oklahoma City</code> and it does three things automatically:
+                </p>
+
+                <ol>
+                    <li>Discovers businesses via Google Maps (including phone number, address, and existing website URL)</li>
+                    <li>Scrapes each business's website and runs it through a scoring pipeline</li>
+                    <li>Returns a ranked list scored 0–100, where higher means worse site and better rebuild opportunity</li>
+                </ol>
+
+                <p>
+                    The output is a sortable table you can work from directly, plus a CSV export for outreach.
+                    The whole point is that you know exactly which businesses are worth calling before you pick up
+                    the phone. You have the receipts to back up your pitch.
+                </p>
+
+                <h2>How the Scoring Works</h2>
+
+                <p>
+                    Every site gets graded A through F and scored across nine factors. Each factor is either a
+                    hit or a miss. When the tool finds a problem, that factor's chip lights up green in the results
+                    table. More green chips means a worse site. Here's what it's checking:
+                </p>
+
+                <ul>
+                    <li><strong>MOB:</strong> No mobile viewport. The site will break on a phone.</li>
+                    <li><strong>SSL:</strong> Running on HTTP, not HTTPS. A security red flag and an SEO penalty.</li>
+                    <li><strong>TBL:</strong> Table-based layout. A relic from the early 2000s.</li>
+                    <li><strong>PHN:</strong> No phone number visible. A local business with no call-to-action.</li>
+                    <li><strong>ADR:</strong> No address visible. Bad for local SEO and customer trust.</li>
+                    <li><strong>CPY:</strong> Copyright year is 3+ years old. A reliable signal the site is abandoned.</li>
+                    <li><strong>CST:</strong> Custom coded, not on Wix or Squarespace. A real target. Someone who once
+                        paid a developer and hasn't touched it since.</li>
+                    <li><strong>SEO:</strong> Missing meta description, H1, or title tag. Invisible to search engines.</li>
+                    <li><strong>AEO:</strong> No structured data, JSON-LD, or Open Graph. Won't show rich results.</li>
+                    <li><strong>AI:</strong> Claude AI visual design grade (A-F). An overall aesthetic assessment
+                        of the design quality.</li>
+                </ul>
+
+                <a href="dumpster2.png" class="screenshot-link" onclick="openLightbox(this);return false;">
+                    <img src="dumpster2.png" alt="Close-up of a single DumpsterSites result row showing the score bar, F grade badge, and green factor chips" class="screenshot">
+                </a>
+                <p class="screenshot-caption">A single result row: score bar on the left, letter grade badge, then each factor chip lighting up green where a problem was found.</p>
+
+                <p>
+                    The score is additive. Each factor contributes points, and the total tells you how broken the
+                    site is overall. A score in the 70s or above with a grade of D or F is your best target: it's a
+                    site that has real structural problems, not just a dated color scheme. Those are the owners who
+                    already suspect their site isn't working for them.
+                </p>
+
+                <h2>The Wide Area Dumpster Dive</h2>
+
+                <p>
+                    The standard search mode runs a Google Places query and returns up to 60 results. That's useful
+                    for a quick pass. But if you want to build a real pipeline, say every dentist in a metro area,
+                    you need to go wider.
+                </p>
+
+                <a href="dumpster3.png" class="screenshot-link" onclick="openLightbox(this);return false;">
+                    <img src="dumpster3.png" alt="DumpsterSites Wide Area Dumpster Dive search form showing query input, center ZIP, and 100mi radius selector" class="screenshot">
+                </a>
+                <p class="screenshot-caption">The Wide Area Dumpster Dive form: enter a query, a center ZIP, and a radius up to 100 miles. It tiles overlapping search circles across the area and deduplicates.</p>
+
+                <p>
+                    The Wide Area Dumpster Dive tiles a geographic area with overlapping search circles. You set a
+                    center ZIP and a radius up to 100 miles, and the tool fans out in a grid pattern, runs
+                    multiple searches, and aggregates and deduplicates the results. Expect 30-90 seconds of runtime
+                    and somewhere between 100 and 300+ results depending on business density.
+                </p>
+
+                <p>
+                    This is the scale play. Instead of finding 40 leads in an afternoon, you run one job overnight
+                    and wake up to a ranked list of every HVAC company in a three-county area. You sort by score,
+                    cut everything below 50, and you've got a qualified calling list in under five minutes.
+                </p>
+
+                <p>
+                    There's also a <strong>No Website</strong> mode that filters the search to only return businesses
+                    with no website at all. Those are the easiest pitches. You're not asking them to replace
+                    something, you're offering them something they don't have.
+                </p>
+
+                <h2>What the Results Look Like</h2>
+
+                <a href="dumpster1.png" class="screenshot-link" onclick="openLightbox(this);return false;">
+                    <img src="dumpster1.png" alt="DumpsterSites main results table showing 445 dentists scored in a Wide Area Dumpster Dive across Oklahoma, with score bars, letter grades, and factor chips" class="screenshot">
+                </a>
+                <p class="screenshot-caption">445 dentists scored in one Wide Area Dumpster Dive run across Oklahoma: job type badge, query, score bars, letter grades, and factor chips for every result.</p>
+
+                <p>
+                    This is the main results table after a Wide Area run on Oklahoma dentists. Each row shows the
+                    business name, the score bar filling left to right, the letter grade badge, and then the factor
+                    chips for every criterion. Green means the problem exists on that site.
+                </p>
+
+                <p>
+                    At a glance you can see which sites are disasters (long red score bars, F grades, chips lit up
+                    across the board) and which ones are borderline (short bars, Cs and Ds, only a couple chips).
+                    The table sorts by score descending by default, so your best leads are always at the top.
+                </p>
+
+                <p>
+                    Each row also stores the business phone number and address from the original Maps data.
+                    When you export to CSV, you get the full record: name, address, phone, website URL, score,
+                    grade, and every factor flag. That's your outreach list, ready to load into a spreadsheet
+                    or a CRM.
+                </p>
+
+                <h2>Who This Is For</h2>
+
+                <p>
+                    DumpsterSites is built for someone who's serious about the local website rebuild play, not
+                    someone looking for a random hack to try once. The people who will get the most out of it:
+                </p>
+
+                <ul>
+                    <li>Freelance web developers who want a repeatable way to find qualified prospects without
+                        cold-scraping directories or buying lead lists</li>
+                    <li>Agency owners looking to fill their pipeline with warm inbound opportunities in specific
+                        verticals or geographies</li>
+                    <li>Solo builders running a one-person web shop who need to spend their outreach time on
+                        leads that are actually worth calling</li>
+                </ul>
+
+                <p>
+                    The CSV export is the handoff point. Once you have a sorted, filtered list, you can work it
+                    however you want: cold email, cold call, LinkedIn outreach, direct mail. The tool doesn't
+                    touch any of that. It just gets you to the point where you know who to contact and why their
+                    site is the problem.
+                </p>
+
+                <h2>One Honest Note</h2>
+
+                <p>
+                    DumpsterSites is a lead qualification tool. It finds and scores opportunities. It does not
+                    write the pitch email, it does not make the call, and it does not build the site. That part
+                    is still on you.
+                </p>
+
+                <p>
+                    What it changes is the ratio of time spent qualifying versus time spent selling. If you've
+                    ever spent an afternoon manually checking local business websites one by one, you know how
+                    much of that time is wasted on sites that are actually fine, or businesses that just closed,
+                    or owners who aren't worth pursuing. DumpsterSites compresses that qualification step down
+                    to a few minutes. The outreach still takes the same amount of effort, but it's better targeted.
+                </p>
+
+                <p>
+                    Run a Wide Area dive, sort by score, cut the bottom half, and start at the top. That's the workflow.
+                </p>
+
+            </div>
+        </article>
+
+        <!-- Footer -->
+        <footer>
+            <img src="signature.png" alt="Jay Ferreira Signature" class="signature-img">
+            <div class="footer-name">jay ferreira</div>
+        </footer>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        function openLightbox(link) {
+            const overlay = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = link.href;
+            img.alt = link.querySelector('img').alt;
+            overlay.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
+</body>
+</html>
