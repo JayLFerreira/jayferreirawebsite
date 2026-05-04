@@ -998,12 +998,24 @@ footer {
     el.textContent = text;
   }
 
-  async function typeInto(el, text, speed) {
-    el.textContent = '';
+  async function typeSegments(el, segments, speed) {
+    el.innerHTML = '';
     el.style.opacity = '1';
-    for (var i = 0; i <= text.length; i++) {
-      el.textContent = text.slice(0, i);
-      await sleep(speed || 80);
+    var done = [];
+    for (var s = 0; s < segments.length; s++) {
+      var seg = segments[s];
+      for (var i = 1; i <= seg.text.length; i++) {
+        var html = '';
+        for (var k = 0; k < done.length; k++) {
+          html += done[k].bold ? '<strong>' + done[k].text + '</strong>' : done[k].text;
+        }
+        var partial = seg.text.slice(0, i);
+        html += seg.bold ? '<strong>' + partial + '</strong>' : partial;
+        el.innerHTML = html;
+        await sleep(speed || 22);
+      }
+      done.push(seg);
+      if (seg.pauseAfter) await sleep(seg.pauseAfter);
     }
   }
 
@@ -1016,7 +1028,12 @@ footer {
     await sleep(450);
     await scrambleIn(wordmarkEl, 'DumpsterSites');
     await sleep(220);
-    await typeInto(taglineEl, 'Find bad websites · Fix Them · Get Paid', 22);
+    await typeSegments(taglineEl, [
+      { text: 'Find bad websites', bold: false, pauseAfter: 500 },
+      { text: ' · Fix Them',      bold: false, pauseAfter: 500 },
+      { text: ' · ',              bold: false, pauseAfter: 0   },
+      { text: 'Get Paid',         bold: true,  pauseAfter: 0   }
+    ], 22);
     await sleep(500);
   }
 
